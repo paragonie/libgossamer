@@ -31,6 +31,7 @@ class Util
      * @throws SodiumException
      * @throws TypeError
      * @psalm-suppress TooFewArguments
+     * @psalm-suppress RedundantConditionGivenDocblockType
      */
     public static function rawBinary($input, $outLen)
     {
