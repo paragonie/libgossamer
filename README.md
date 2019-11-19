@@ -1,12 +1,10 @@
 # Libgossamer
 
-<!--
 [![Build Status](https://travis-ci.org/paragonie/libgossamer.svg?branch=master)](https://travis-ci.org/paragonie/libgossamer)
 [![Latest Stable Version](https://poser.pugx.org/paragonie/libgossamer/v/stable)](https://packagist.org/packages/paragonie/libgossamer)
 [![Latest Unstable Version](https://poser.pugx.org/paragonie/libgossamer/v/unstable)](https://packagist.org/packages/paragonie/libgossamer)
 [![License](https://poser.pugx.org/paragonie/libgossamer/license)](https://packagist.org/packages/paragonie/libgossamer)
 [![Downloads](https://img.shields.io/packagist/dt/paragonie/libgossamer.svg)](https://packagist.org/packages/paragonie/libgossamer)
--->
 
 Library that provides most of the plumbing for the Gossamer PKI.
 

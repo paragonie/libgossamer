@@ -15,12 +15,10 @@ class MessageTest extends TestCase
     public $verification_key;
 
     /**
-     * MessageTest constructor.
      * @throws SodiumException
      */
-    public function __construct($name = null, array $data = [], $dataName = '')
+    public function setUp()
     {
-        parent::__construct($name, $data, $dataName);
         $keypair = sodium_crypto_sign_keypair();
         $this->signing_key = sodium_crypto_sign_secretkey($keypair);
         $this->verification_key = sodium_bin2hex(
