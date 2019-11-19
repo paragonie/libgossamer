@@ -13,12 +13,12 @@ matrix:
     - php: "nightly"
     - php: "master"
   allow_failures:
-    - php: "7.4snapshot"
     - php: "nightly"
     - php: "master"
 
 install:
   - composer update
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} != "7.4" ]]; then composer require vimeo/psalm:^3.6; fi
 
 script:
   - vendor/bin/phpunit
