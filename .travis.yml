@@ -18,7 +18,7 @@ matrix:
 
 install:
   - composer update
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} != "7.4" ]]; then composer require vimeo/psalm:^3.6; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.4" ]]; then composer require vimeo/psalm:^3.6; fi
 
 script:
   - vendor/bin/phpunit
