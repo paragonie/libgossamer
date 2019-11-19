@@ -2,7 +2,7 @@
 namespace ParagonIE\Gossamer\Tests;
 
 use PHPUnit\Framework\TestCase;
-use ParagonIE\Gossamer\Message;
+use ParagonIE\Gossamer\Protocol\Message;
 use Exception;
 use SodiumException;
 

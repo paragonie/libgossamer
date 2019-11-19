@@ -1,9 +1,9 @@
 <?php
 namespace ParagonIE\Gossamer\Tests;
 
-use ParagonIE\Gossamer\Action;
 use ParagonIE\Gossamer\DbInterface;
-use ParagonIE\Gossamer\Message;
+use ParagonIE\Gossamer\Protocol\Action;
+use ParagonIE\Gossamer\Protocol\Message;
 use ParagonIE\Gossamer\Tests\Dummy\DummyDB;
 use PHPUnit\Framework\TestCase;
 
