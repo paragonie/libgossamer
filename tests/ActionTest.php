@@ -25,6 +25,9 @@ class ActionTest extends TestCase
      */
     public function setUp()
     {
+        if (!extension_loaded('sodium')) {
+            $this->markTestSkipped('ext/sodium not installed or enabled');
+        }
         $this->db = new DummyDB();
         $this->sk = sodium_hex2bin(
             'ed8e80be578b817157d916549580c8fea8c125a23a95e4ab6ca5c96d84e76f30' .
