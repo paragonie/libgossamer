@@ -25,6 +25,7 @@ class Common
      * Verifier constructor.
      * @param int $alg
      * @throws GossamerException
+     * @psalm-suppress InternalMethod
      */
     public function __construct($alg = self::SIGN_ALG_ED25519_SHA384)
     {
@@ -58,7 +59,8 @@ class Common
         } elseif ($this->hashAlgorithm === 'blake2b') {
             $fp = fopen($filePath, 'rb');
             $stat = fstat($fp);
-            $size = $stat['size'];
+            /** @var int $size */
+            $size = (int) $stat['size'];
             $state = sodium_crypto_generichash_init();
             for ($i = 0; $i < $size; $i += 8192) {
                 $buf = fread($fp, 8192);
