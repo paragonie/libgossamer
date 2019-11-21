@@ -8,10 +8,7 @@ namespace ParagonIE\Gossamer;
 interface VerifierInterface
 {
     /**
-     * Does the Quorum agree that a given hash exists?
-     *
-     * @param string $hash
      * @return bool
      */
-    public function quorumAgrees($hash);
+    public function verify();
 }

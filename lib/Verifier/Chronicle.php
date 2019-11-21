@@ -44,6 +44,19 @@ class Chronicle implements VerifierInterface
     }
 
     /**
+     * @see Chronicle::quorumAgrees()
+     *
+     * @param string $hash
+     * @return bool
+     * @throws GossamerException
+     * @throws \SodiumException
+     */
+    public function verify($hash = '')
+    {
+        return $this->quorumAgrees($hash);
+    }
+
+    /**
      * @param string $url
      * @param string $publicKey
      * @param string $trust
