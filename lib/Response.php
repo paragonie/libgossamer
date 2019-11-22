@@ -83,17 +83,5 @@ class Response extends Packet
             $res['provider'],
             isset($res['publickey']) ? $res['publickey'] : ''
         );
-
-        // Wrong level of abstraction. Maybe Envelope?
-        /*
-        $msg = new Message($res['contents'], $res['signature']);
-        if (!$msg->signatureValidForPublicKey($res['publickey'])) {
-            throw new GossamerException('Invalid signature for given public key');
-        }
-        $msg->setMeta('summaryhash', $res['summaryhash']);
-        $msg->setMeta('currhash', $res['currhash']);
-        $msg->setMeta('prevhash', $res['prevhash']);
-        return $msg;
-        */
     }
 }
