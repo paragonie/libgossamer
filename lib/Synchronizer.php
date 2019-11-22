@@ -129,16 +129,6 @@ class Synchronizer
     }
 
     /**
-     * @param string $provider
-     * @param string $publicKey
-     * @return bool
-     */
-    public function ownershipCheck($provider, $publicKey)
-    {
-        return false;
-    }
-
-    /**
      * Keep calling transcribe() until we run out of upstream messages to copy/parse,
      * or we encounter a GossamerException.
      *
@@ -182,10 +172,6 @@ class Synchronizer
             if ($verifier->verify($summaryhash)) {
                 $message = $signedMessage->verifyAndExtract($this->db, $this->superProvider);
                 $action = Action::fromMessage($message);
-                $provider = $action->getProvider();
-                if (!$this->ownershipCheck($provider, $publicKey)) {
-                    continue;
-                }
                 $action->perform($this->db);
             }
         }
