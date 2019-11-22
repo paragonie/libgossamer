@@ -2,7 +2,6 @@
 namespace ParagonIE\Gossamer\Scribe;
 
 use ParagonIE\Gossamer\HttpInterface;
-use ParagonIE\Gossamer\Protocol\Message;
 use ParagonIE\Gossamer\Protocol\SignedMessage;
 use ParagonIE\Gossamer\ScribeInterface;
 use ParagonIE\Gossamer\Util;
