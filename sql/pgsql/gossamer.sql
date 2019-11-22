@@ -39,3 +39,9 @@ CREATE TABLE gossamer_package_releases (
 );
 CREATE UNIQUE INDEX gossamer_release_version_index
     ON gossamer_package_releases (package, version);
+
+-- Gossamer metadata table
+CREATE TABLE gossamer_meta (
+    version TEXT DEFAULT '1.0.0',
+    lasthash TEXT
+);

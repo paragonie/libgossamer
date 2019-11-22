@@ -1,10 +1,15 @@
 <?php
-namespace ParagonIE\Gossamer\Tests;
+namespace ParagonIE\Gossamer\Tests\Verifier;
+
 use ParagonIE\Gossamer\Http\Guzzle;
 use ParagonIE\Gossamer\Verifier\Chronicle;
 use PHPUnit\Framework\TestCase;
 
-class ChronicleVerifierTest extends TestCase
+/**
+ * Class ChronicleTest
+ * @package ParagonIE\Gossamer\Tests\Verifier
+ */
+class ChronicleTest extends TestCase
 {
     /** @var Guzzle */
     private $http;

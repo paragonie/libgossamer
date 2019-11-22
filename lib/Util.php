@@ -100,6 +100,7 @@ class Util
             if ($r !== $i) {
                 /** @var array<array-key, mixed> $temp */
                 $temp = $array[$keys[$r]];
+                /** @var array<array-key, string|bool|int|float|array|object|null> $array */
                 $array[$keys[$r]] = $array[$keys[$i]];
                 $array[$keys[$i]] = $temp;
             }

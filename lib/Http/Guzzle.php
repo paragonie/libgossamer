@@ -37,10 +37,42 @@ class Guzzle implements HttpInterface
             $response = $ex->getResponse();
         }
         /** @var ResponseInterface $response */
+        return $this->responseToArray($response);
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @return array{body: string, headers: array<array-key, array<array-key, string>>, status: int}
+     */
+    public function responseToArray(ResponseInterface $response)
+    {
         return array(
             'status' => $response->getStatusCode(),
             'headers' => $response->getHeaders(),
             'body' => (string) $response->getBody()
         );
+    }
+
+    /**
+     * @param string $url
+     * @param string $body
+     * @param array $headers
+     * @return array{body: string, headers: array<array-key, array<array-key, string>>, status: int}
+     */
+    public function post($url, $body, array $headers = array())
+    {
+        try {
+            $response = $this->guzzle->post(
+                $url,
+                array(
+                    'body' => $body,
+                    'headers' => $headers
+                )
+            );
+        } catch (ClientException $ex) {
+            $response = $ex->getResponse();
+        }
+        /** @var ResponseInterface $response */
+        return $this->responseToArray($response);
     }
 }

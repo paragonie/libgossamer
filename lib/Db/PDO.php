@@ -23,6 +23,49 @@ class PDO implements DbInterface
     }
 
     /**
+     * @return string
+     */
+    public function getCheckpointHash()
+    {
+        return (string) $this->db->cell(
+            "SELECT lasthash FROM gossamer_meta WHERE version = ?",
+            self::GOSSAMER_PROTOCOL_VERSION
+        );
+    }
+
+    /**
+     * @param string $hash
+     * @return bool
+     */
+    public function updateMeta($hash = '')
+    {
+        if (!$hash) {
+            return false;
+        }
+        if ($this->db->exists(
+            "SELECT count(*) FROM gossamer_meta WHERE version = ?",
+            self::GOSSAMER_PROTOCOL_VERSION
+        )) {
+            $this->db->update(
+                self::TABLE_META,
+                array(
+                    'lasthash' => $hash
+                ),
+                array('version' => self::GOSSAMER_PROTOCOL_VERSION)
+            );
+        } else {
+            $this->db->insert(
+                self::TABLE_META,
+                array(
+                    'lasthash' => $hash,
+                    'version' => self::GOSSAMER_PROTOCOL_VERSION
+                )
+            );
+        }
+        return true;
+    }
+
+    /**
      * @param string $provider
      * @param string $publicKey
      * @param array $meta
@@ -48,6 +91,7 @@ class PDO implements DbInterface
             self::TABLE_PUBLIC_KEYS,
             $inserts
         );
+        $this->updateMeta($hash);
         return $this->db->commit();
     }
 
@@ -77,6 +121,7 @@ class PDO implements DbInterface
                 'publickey' => $publicKey
             ]
         );
+        $this->updateMeta($hash);
         return $this->db->commit();
     }
 
@@ -120,6 +165,7 @@ class PDO implements DbInterface
             self::TABLE_PACKAGE_RELEASES,
             $inserts
         );
+        $this->updateMeta($hash);
         return $this->db->commit();
     }
 
@@ -158,7 +204,40 @@ class PDO implements DbInterface
                 'package' => $packageId
             ]
         );
+        $this->updateMeta($hash);
         return $this->db->commit();
+    }
+
+    /**
+     * @param string $providerName
+     * @return bool
+     */
+    public function providerExists($providerName)
+    {
+        return $this->db->exists(
+            "SELECT count(id) FROM " . self::TABLE_PROVIDERS . " WHERE name = ?",
+            $providerName
+        );
+    }
+
+    /**
+     * @param string $providerName
+     * @return array<array-key, string>
+     */
+    public function getPublicKeysForProvider($providerName)
+    {
+        /** @var array<array-key, string> $pubKeys */
+        $pubKeys = $this->db->col(
+            "SELECT pk.publickey FROM gossamer_provider_publickeys pk
+             JOIN gossamer_providers prov ON pk.provider = prov.id
+             WHERE prov.name = ? AND NOT pk.revoked",
+            0,
+            $providerName
+        );
+        if (empty($pubKeys)) {
+            return array();
+        }
+        return $pubKeys;
     }
 
     /**

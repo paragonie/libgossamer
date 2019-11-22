@@ -3,6 +3,7 @@ namespace ParagonIE\Gossamer\Verifier;
 
 use ParagonIE\Gossamer\GossamerException;
 use ParagonIE\Gossamer\HttpInterface;
+use ParagonIE\Gossamer\LedgerInterface;
 use ParagonIE\Gossamer\Util;
 use ParagonIE\Gossamer\VerifierInterface;
 
@@ -10,7 +11,7 @@ use ParagonIE\Gossamer\VerifierInterface;
  * Class Chronicle
  * @package ParagonIE\Gossamer\Verifier
  */
-class Chronicle implements VerifierInterface
+class Chronicle implements LedgerInterface, VerifierInterface
 {
     // Verify Ed25519 signatures with the given public key
     const TRUST_BASIC = 'basic';
@@ -213,6 +214,30 @@ class Chronicle implements VerifierInterface
     public function setQuorumMinimum($numInstances)
     {
         $this->quorumMinimum = $numInstances;
+        return $this;
+    }
+
+    /**
+     * @return self
+     */
+    public function clearInstances()
+    {
+        $this->instances = array();
+        return $this;
+    }
+
+    /**
+     * @param array<array-key, array{url: string, public-key: string, trust: string}> $instances
+     * @return self
+     */
+    public function populateInstances(array $instances)
+    {
+        /**
+         * @var array{url: string, public-key: string, trust: string} $inst
+         */
+        foreach ($instances as $inst) {
+            $this->addChronicle($inst['url'], $inst['public-key'], $inst['trust']);
+        }
         return $this;
     }
 }

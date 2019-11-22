@@ -20,12 +20,36 @@ class DummyDB implements DbInterface
     protected $state;
 
     /**
+     * @return string
+     */
+    public function getCheckpointHash()
+    {
+        return $this->state[self::TABLE_META]['lasthash'];
+    }
+
+    /**
+     * @param string $hash
+     * @return bool
+     */
+    public function updateMeta($hash = '')
+    {
+        $this->state[self::TABLE_META]['lasthash'] = $hash;
+        return true;
+    }
+
+    /**
      * DummyDB constructor.
      * @throws \Exception
      */
     public function __construct()
     {
         $this->state = [];
+        if (!isset($this->state[self::TABLE_META])) {
+            $this->state[self::TABLE_META] = [
+                'version' => self::GOSSAMER_PROTOCOL_VERSION,
+                'lasthash' => ''
+            ];
+        }
         if (!isset($this->state[self::TABLE_PROVIDERS])) {
             $this->state[self::TABLE_PROVIDERS] = [];
         }
@@ -61,16 +85,18 @@ class DummyDB implements DbInterface
      * @param string $provider
      * @param string $publicKey
      * @param array $meta
+     * @param string $hash
      * @return bool
      * @throws \SodiumException
      */
-    public function appendKey($provider, $publicKey, array $meta = array())
+    public function appendKey($provider, $publicKey, array $meta = array(), $hash = '')
     {
         $providerId = $this->getProviderId($provider);
         $publicKeyId = $this->getPublicKeyId($publicKey, $providerId);
         if ($meta) {
             $this->state[self::TABLE_PUBLIC_KEYS][$publicKeyId]['metadata'] = json_encode($meta);
         }
+        $this->updateMeta($hash);
         return !empty($this->state[self::TABLE_PUBLIC_KEYS][$publicKeyId]);
     }
 
@@ -78,14 +104,16 @@ class DummyDB implements DbInterface
      * @param string $provider
      * @param string $publicKey
      * @param array $meta
+     * @param string $hash
      * @return bool
      * @throws \SodiumException
      */
-    public function revokeKey($provider, $publicKey, array $meta = array())
+    public function revokeKey($provider, $publicKey, array $meta = array(), $hash = '')
     {
         $providerId = $this->getProviderId($provider);
         $publicKeyId = $this->getPublicKeyId($publicKey, $providerId);
         $this->state[self::TABLE_PUBLIC_KEYS][$publicKeyId]['revoked'] = true;
+        $this->updateMeta($hash);
         return true;
     }
 
@@ -127,6 +155,7 @@ class DummyDB implements DbInterface
             'revokehash' => null,
             'metadata' => json_encode($meta)
         ];
+        $this->updateMeta($hash);
         return true;
     }
 
@@ -153,6 +182,7 @@ class DummyDB implements DbInterface
         $index = $this->hashIndex(self::TABLE_PACKAGE_RELEASES, $packageId . '@@' . $release);
         $this->state[self::TABLE_PACKAGE_RELEASES][$index]['revoked'] = true;
         $this->state[self::TABLE_PACKAGE_RELEASES][$index]['revokehash'] = $hash;
+        $this->updateMeta($hash);
         return true;
     }
 
@@ -174,6 +204,36 @@ class DummyDB implements DbInterface
             ];
         }
         return $index;
+    }
+
+
+    /**
+     * @param string $providerName
+     * @return bool
+     * @throws \SodiumException
+     */
+    public function providerExists($providerName)
+    {
+        $index = $this->hashIndex(self::TABLE_PROVIDERS, $providerName);
+        return isset($this->state[self::TABLE_PROVIDERS][$index]);
+    }
+
+    /**
+     * @param string $providerName
+     * @return array<array-key, string>
+     * @throws \SodiumException
+     */
+    public function getPublicKeysForProvider($providerName)
+    {
+        $providerId = $this->getProviderId($providerName);
+        $return = array();
+        foreach ($this->state[self::TABLE_PUBLIC_KEYS] as $row) {
+            if ($providerId !== $row['provider']) {
+                continue;
+            }
+            $return []= $row['publickey'];
+        }
+        return $return;
     }
 
     /**
