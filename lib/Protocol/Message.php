@@ -1,5 +1,7 @@
 <?php
-namespace ParagonIE\Gossamer;
+namespace ParagonIE\Gossamer\Protocol;
+
+use ParagonIE\Gossamer\Util;
 
 /**
  * Class Message
@@ -23,7 +25,7 @@ class Message
      * @param string $contents
      * @param string $signature
      */
-    public function __construct($contents, $signature)
+    public function __construct($contents, $signature = '')
     {
         $this->contents = $contents;
         $this->signature = $signature;
@@ -52,6 +54,9 @@ class Message
      */
     public function signatureValidForPublicKey($publicKey)
     {
+        if (empty($this->signature)) {
+            return false;
+        }
         return sodium_crypto_sign_verify_detached(
             Util::rawBinary($this->signature, 64),
             $this->contents,

@@ -1,13 +1,14 @@
 <?php
-namespace ParagonIE\Gossamer\Tests;
+namespace ParagonIE\Gossamer\Tests\Protocol;
 
 use PHPUnit\Framework\TestCase;
-use ParagonIE\Gossamer\Message;
+use ParagonIE\Gossamer\Protocol\Message;
 use Exception;
 use SodiumException;
 
 /**
  * Class MessageTest
+ * @package ParagonIE\Gossamer\Tests\Protocol
  */
 class MessageTest extends TestCase
 {

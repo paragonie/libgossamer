@@ -1,12 +1,15 @@
 <?php
-namespace ParagonIE\Gossamer\Tests;
+namespace ParagonIE\Gossamer\Tests\Protocol;
 
-use ParagonIE\Gossamer\Action;
-use ParagonIE\Gossamer\DbInterface;
-use ParagonIE\Gossamer\Message;
+use ParagonIE\Gossamer\Protocol\Action;
+use ParagonIE\Gossamer\Protocol\Message;
 use ParagonIE\Gossamer\Tests\Dummy\DummyDB;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class ActionTest
+ * @package ParagonIE\Gossamer\Tests\Protocol
+ */
 class ActionTest extends TestCase
 {
     const DUMMY_USERNAME = 'phpunit-dummy-user';

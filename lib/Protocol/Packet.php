@@ -1,5 +1,8 @@
 <?php
-namespace ParagonIE\Gossamer;
+namespace ParagonIE\Gossamer\Protocol;
+
+use ParagonIE\Gossamer\GossamerException;
+use ParagonIE\Gossamer\Util;
 
 /**
  * Class Packet

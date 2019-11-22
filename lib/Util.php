@@ -1,5 +1,6 @@
 <?php
 namespace ParagonIE\Gossamer;
+
 use RangeException;
 use SodiumException;
 use TypeError;
@@ -61,5 +62,50 @@ class Util
             );
         }
         return $input;
+    }
+
+    /**
+     * @param int $min
+     * @param int $max
+     * @return int
+     * @throws GossamerException
+     */
+    public static function randomInt($min, $max)
+    {
+        try {
+            return random_int($min, $max);
+        } catch (\Error $ex) {
+            throw new GossamerException('RNG Failure', 0, $ex);
+        } catch (\Exception $ex) {
+            throw new GossamerException('RNG failure', 0, $ex);
+        }
+    }
+
+    /**
+     * Shuffle an array using a CSPRNG
+     *
+     * @link https://paragonie.com/b/JvICXzh_jhLyt4y3
+     *
+     * @param array<array-key, mixed> &$array reference to an array
+     * @return void
+     * @throws GossamerException
+     * @psalm-suppress MixedAssignment
+     */
+    public static function secureShuffle(&$array)
+    {
+        $size = count($array);
+        $keys = array_keys($array);
+        for ($i = $size - 1; $i > 0; --$i) {
+            $r = self::randomInt(0, $i);
+            if ($r !== $i) {
+                /** @var array<array-key, mixed> $temp */
+                $temp = $array[$keys[$r]];
+                /** @var array<array-key, string|bool|int|float|array|object|null> $array */
+                $array[$keys[$r]] = $array[$keys[$i]];
+                $array[$keys[$i]] = $temp;
+            }
+        }
+        // Reset indices:
+        $array = array_values($array);
     }
 }
