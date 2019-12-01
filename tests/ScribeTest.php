@@ -2,6 +2,7 @@
 namespace ParagonIE\Gossamer\Tests;
 
 use ParagonIE\Gossamer\Protocol\Action;
+use ParagonIE\Gossamer\Protocol\SignedMessage;
 use ParagonIE\Gossamer\Tests\Dummy\DummyChronicle;
 use ParagonIE\Gossamer\Tests\Dummy\DummyDB;
 use ParagonIE\Gossamer\Tests\Dummy\DummyScribe;
@@ -17,8 +18,10 @@ class ScribeTest extends TestCase
 
     /** @var DummyChronicle $chronicle */
     private $chronicle;
+
     /** @var DummyDB $db */
     private $db;
+
     /** @var DummyScribe $scribe */
     private $scribe;
 
@@ -50,8 +53,19 @@ class ScribeTest extends TestCase
             ->withVerb(Action::VERB_APPEND_KEY)
             ->withProvider(self::DUMMY_USERNAME)
             ->withPublicKey(sodium_bin2hex($dummyPk));
+        $sm = $action->toSignedMessage($sk);
         $this->assertTrue(
-            $this->scribe->publish($action->toSignedMessage($sk))
+            $this->scribe->publish($sm)
+        );
+
+        // Confirm the "latest" entry is the one we wrote.
+        $latest = $this->chronicle->latest();
+        $this->assertTrue(is_string($latest['contents']));
+        $sm2 = SignedMessage::fromString($latest['contents']);
+        $this->assertSame($sm2->getProvider(), $sm->getProvider());
+        $this->assertSame(
+            $sm->insecureExtract()->getContents(),
+            $sm2->insecureExtract()->getContents()
         );
     }
 }
