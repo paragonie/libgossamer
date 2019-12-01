@@ -11,6 +11,26 @@ use TypeError;
 class Util
 {
     /**
+     * @param string $whatever
+     * @return string
+     * @throws SodiumException
+     */
+    public static function b64uEncode($whatever)
+    {
+        return sodium_bin2base64($whatever, SODIUM_BASE64_VARIANT_URLSAFE);
+    }
+
+    /**
+     * @param string $str
+     * @return int
+     * @psalm-suppress InternalMethod
+     */
+    public static function strlen($str)
+    {
+        return \ParagonIE_Sodium_Core_Util::strlen($str);
+    }
+
+    /**
      * @param string &$var
      * @return void
      */

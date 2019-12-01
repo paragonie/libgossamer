@@ -2,8 +2,9 @@
 namespace ParagonIE\Gossamer\Http;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\TransferException;
+use ParagonIE\Certainty\Exception\CertaintyException;
 use ParagonIE\Gossamer\HttpInterface;
+use ParagonIE\Certainty\RemoteFetch;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -19,10 +20,23 @@ class Guzzle implements HttpInterface
 
     /**
      * Guzzle constructor.
+     *
+     * @param RemoteFetch|null $remoteFetch
+     * @throws CertaintyException
+     * @throws \SodiumException
      */
-    public function __construct()
+    public function __construct($remoteFetch = null)
     {
-        $this->guzzle = new Client();
+        if (is_null($remoteFetch)) {
+            $remoteFetch = new RemoteFetch(
+                dirname(dirname(__DIR__)) . '/data'
+            );
+        }
+        $this->guzzle = new Client(array(
+            'verify' => $remoteFetch
+                ->getLatestBundle()
+                ->getFilePath()
+        ));
     }
 
     /**
