@@ -1,10 +1,7 @@
 <?php
 namespace ParagonIE\Gossamer\Tests;
 
-use http\Message;
 use ParagonIE\Gossamer\Protocol\Action;
-use ParagonIE\Gossamer\Protocol\SignedMessage;
-use ParagonIE\Gossamer\Synchronizer;
 use ParagonIE\Gossamer\Tests\Dummy\DummyChronicle;
 use ParagonIE\Gossamer\Tests\Dummy\DummyDB;
 use ParagonIE\Gossamer\Tests\Dummy\DummyScribe;
