@@ -17,3 +17,7 @@ The code syntax is compatible with PHP 5.3+, but this is only intended for PHP 5
 one of your projects...
 
 * (TODO: Put links to higher-level abstractions here.)
+
+## Documentation
+
+**[Read the Libgossamer Documentation online](docs).**
