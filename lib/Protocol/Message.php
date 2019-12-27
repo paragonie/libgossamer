@@ -22,6 +22,7 @@ class Message
 
     /**
      * Message constructor.
+     *
      * @param string $contents
      * @param string $signature
      */
@@ -32,6 +33,8 @@ class Message
     }
 
     /**
+     * Get the contents of this message.
+     *
      * @return string
      */
     public function getContents()
@@ -40,6 +43,8 @@ class Message
     }
 
     /**
+     * Get the signature on this message.
+     *
      * @return string
      */
     public function getSignature()
@@ -48,6 +53,8 @@ class Message
     }
 
     /**
+     * Is the signature valid for this message, against a given public key?
+     *
      * @param string $publicKey
      * @return bool
      * @throws \SodiumException

@@ -97,6 +97,8 @@ class Action
     }
 
     /**
+     * Serialize to a Message object. The opposite of fromMessage().
+     *
      * @return Message
      */
     public function toMessage()
@@ -105,6 +107,8 @@ class Action
     }
 
     /**
+     * Convert to a JSON-encoded string. Used to build Message objects.
+     *
      * @return string
      */
     public function toJsonString()

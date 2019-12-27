@@ -33,6 +33,7 @@ class SignedMessage
 
     /**
      * SignedMessage constructor.
+     *
      * @param Message $message
      * @param string $provider
      * @param string $publicKey
@@ -45,6 +46,8 @@ class SignedMessage
     }
 
     /**
+     * Deserialize a SignedMessage from a string. Wraps init().
+     *
      * @param string $packed
      * @return self
      */
@@ -66,6 +69,10 @@ class SignedMessage
     }
 
     /**
+     * Initialize from string components.
+     *
+     * Creates a Message object internally.
+     *
      * @param string $contents
      * @param string $signature
      * @param string $provider
@@ -82,6 +89,10 @@ class SignedMessage
     }
 
     /**
+     * Sign an arbitrary string, for a given provider, with a given secret key.
+     *
+     * Performs no database lookups or access controls validation.
+     *
      * @param string $contents
      * @param string $provider
      * @param string $secretKey
@@ -222,6 +233,12 @@ class SignedMessage
     }
 
     /**
+     * Verifies that this message was signed by the responsible provider (or,
+     * failing that, by the Super Provider), and then returns the Message.
+     *
+     * Throws a GossamerException if the signature is not valid for either
+     * possible provider.
+     *
      * @param DbInterface $db
      * @param string $superProvider
      * @return Message
@@ -242,6 +259,8 @@ class SignedMessage
     }
 
     /**
+     * Only meant to be used for unit testing.
+     *
      * @return Message
      */
     public function insecureExtract()

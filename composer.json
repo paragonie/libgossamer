@@ -25,6 +25,7 @@
     "vimeo/psalm": "^1|^3"
   },
   "scripts": {
+    "full-test": "phpunit && psalm",
     "test": "phpunit",
     "static-analysis": "psalm"
   },
