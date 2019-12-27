@@ -20,7 +20,7 @@ class Response extends Packet
         if (!is_array($decoded)) {
             throw new GossamerException('Could not decode JSON message.');
         }
-        if (empty($decoded['results'])) {
+        if (!isset($decoded['results'])) {
             throw new GossamerException('Key "results" not found in JSON message.');
         }
         /** @var array<int, array<string, string>> $results */
@@ -41,11 +41,22 @@ class Response extends Packet
 
         /** @var array<string, string> $res */
         foreach ($results as $index => $res) {
+            /** @var array<string, string> $contents */
+            $contents = json_decode($res['contents'], true);
+            if (!isset($contents['message'])) {
+                throw new GossamerException('Key "message" not found in "contents" at index ' . $index . '.');
+            }
+            if (!isset($contents['signature'])) {
+                throw new GossamerException('Key "signature" not found in "contents" at index ' . $index . '.');
+            }
+            if (!isset($contents['provider'])) {
+                throw new GossamerException('Key "provider" not found in "contents" at index ' . $index . '.');
+            }
             $messages []= SignedMessage::init(
-                $res['message'],
-                $res['signature'],
-                $res['provider'],
-                isset($res['publickey']) ? $res['publickey'] : ''
+                (string) $contents['message'],
+                (string) $contents['signature'],
+                (string) $contents['provider'],
+                (string) (isset($contents['publickey']) ? $contents['publickey'] : '')
             );
         }
         return $messages;
@@ -77,11 +88,22 @@ class Response extends Packet
         if (empty($res['publickey'])) {
             throw new GossamerException('Key "publickey" not found at index ' . $index . '.');
         }
+        /** @var array<string, string> $contents */
+        $contents = json_decode($res['contents'], true);
+        if (!isset($contents['message'])) {
+            throw new GossamerException('Key "message" not found in "contents" at index ' . $index . '.');
+        }
+        if (!isset($contents['signature'])) {
+            throw new GossamerException('Key "signature" not found in "contents" at index ' . $index . '.');
+        }
+        if (!isset($contents['provider'])) {
+            throw new GossamerException('Key "provider" not found in "contents" at index ' . $index . '.');
+        }
         return SignedMessage::init(
-            $res['message'],
-            $res['signature'],
-            $res['provider'],
-            isset($res['publickey']) ? $res['publickey'] : ''
+            (string) $contents['message'],
+            (string) $contents['signature'],
+            (string) $contents['provider'],
+            (string) (isset($contents['publickey']) ? $contents['publickey'] : '')
         );
     }
 }

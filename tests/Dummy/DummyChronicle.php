@@ -111,4 +111,25 @@ class DummyChronicle
         }
         return $return;
     }
+
+    /**
+     * @param $summaryHash
+     * @return array
+     * @throws \SodiumException
+     */
+    public function getRecordsSince($summaryHash)
+    {
+        $return = array();
+        $match = Util::rawBinary($summaryHash, 32);
+        $found = false;
+        foreach ($this->chain as $c) {
+            $iter = Util::rawBinary($c['summary'], 32);
+            if (!$found) {
+                $found = hash_equals($match, $iter);
+                continue;
+            }
+            $return[] = $c;
+        }
+        return $return;
+    }
 }
