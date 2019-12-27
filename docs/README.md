@@ -6,8 +6,23 @@ Gossamer is an authority-free PKI for ensuring **providers** can sign their
 updates and manage their own signing keys, and that **users** can verify the
 authenticity of new keys and updates.
 
-The aim of Gossamer is to allow automatic key/update trust in a way that can be audited by independent third
-parties.
+### Motivation
+
+The aim of Gossamer is to allow automatic key/update trust in a way that can be
+audited by independent third parties.
+
+The basic idea of Gossamer is simple: Use verifiable data structures to create
+a live snapshot of the current state of affairs for public keys and software
+updates.
+
+No X.509, no ASN.1, no expiration dates and [weird rules](https://www.pkisolutions.com/basic-constraints-certificate-extension).
+
+This lets you write code that looks like this:
+
+    $keys = fetch_public_keys('paragonie');
+
+...and then if any keys are compromised, the $keys array will not contain the
+revoked ones.
 
 ### Components
 
