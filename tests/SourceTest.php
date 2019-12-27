@@ -69,7 +69,8 @@ class SourceTest extends TestCase
         $this->assertSame(0, count($since));
 
         // Append 100 records, verify we see 100.
-        for ($n = 1; $n <= 100; ++$n) {
+        $max = extension_loaded('sodium') ? 100 : 1;
+        for ($n = 1; $n <= $max; ++$n) {
             $action = (new Action())
                 ->withVerb(Action::VERB_APPEND_KEY)
                 ->withProvider(self::DUMMY_USERNAME)
