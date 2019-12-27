@@ -45,6 +45,27 @@ class SignedMessage
     }
 
     /**
+     * @param string $packed
+     * @return self
+     */
+    public static function fromString($packed)
+    {
+        /** @var array{signature: string, message: string, provider: string, public-key: string} $decoded */
+        $decoded = json_decode($packed, true);
+
+        if (empty($decoded['public-key'])) {
+            $decoded['public-key'] = '';
+        }
+
+        return self::init(
+            $decoded['message'],
+            $decoded['signature'],
+            $decoded['provider'],
+            $decoded['public-key']
+        );
+    }
+
+    /**
      * @param string $contents
      * @param string $signature
      * @param string $provider
@@ -78,27 +99,6 @@ class SignedMessage
             sodium_bin2hex(
                 sodium_crypto_sign_publickey_from_secretkey($secretKey)
             )
-        );
-    }
-
-    /**
-     * @param string $packed
-     * @return self
-     */
-    public static function fromString($packed)
-    {
-        /** @var array{signature: string, message: string, provider: string, public-key: string} $decoded */
-        $decoded = json_decode($packed, true);
-
-        if (empty($decoded['public-key'])) {
-            $decoded['public-key'] = '';
-        }
-
-        return self::init(
-            $decoded['message'],
-            $decoded['signature'],
-            $decoded['provider'],
-            $decoded['public-key']
         );
     }
 
