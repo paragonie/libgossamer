@@ -32,7 +32,13 @@ class UtilTest extends TestCase
     {
         $string = random_bytes(32);
         Util::memzero($string);
-        $this->assertEmpty($string, 'memzero() failed');
+        if (extension_loaded('sodium')) {
+            $this->assertEmpty($string, 'memzero() failed');
+        } elseif (is_string($string)) {
+            $this->assertRegExp('#^0+$#', sodium_hex2bin($string), 'memzero() failed');
+        } else {
+            $this->assertEmpty($string, 'memzero() failed');
+        }
     }
 
     /**
