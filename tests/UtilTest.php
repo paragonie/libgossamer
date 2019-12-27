@@ -35,7 +35,7 @@ class UtilTest extends TestCase
         if (extension_loaded('sodium')) {
             $this->assertEmpty($string, 'memzero() failed');
         } elseif (is_string($string)) {
-            $this->assertRegExp('#^0+$#', sodium_hex2bin($string), 'memzero() failed');
+            $this->assertRegExp('#^0+$#', sodium_bin2hex($string), 'memzero() failed');
         } else {
             $this->assertEmpty($string, 'memzero() failed');
         }
