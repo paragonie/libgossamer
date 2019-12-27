@@ -52,5 +52,8 @@ class VerifierTest extends TestCase
         $this->assertTrue(
             $verifier->verify($filepath, $signature, array($random_pk, $this->pk))
         );
+
+        // Clean up
+        unlink($filepath);
     }
 }
