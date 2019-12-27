@@ -11,6 +11,8 @@ use TypeError;
 class Util
 {
     /**
+     * Base64url encode a string.
+     *
      * @param string $whatever
      * @return string
      * @throws SodiumException
@@ -21,16 +23,8 @@ class Util
     }
 
     /**
-     * @param string $str
-     * @return int
-     * @psalm-suppress InternalMethod
-     */
-    public static function strlen($str)
-    {
-        return \ParagonIE_Sodium_Core_Util::strlen($str);
-    }
-
-    /**
+     * Wipe a variable from memory.
+     *
      * @param string &$var
      * @return void
      */
@@ -45,6 +39,8 @@ class Util
     }
 
     /**
+     * Convert from raw binary.
+     *
      * @param string $input
      * @param int|null $outLen
      * @return string
@@ -85,6 +81,10 @@ class Util
     }
 
     /**
+     * Wrapper for random_int() that catches the exception thrown and replaces
+     * it with a GossamerException, so we don't have to catch or docblock
+     * generic exceptions in our library.
+     *
      * @param int $min
      * @param int $max
      * @return int
@@ -127,5 +127,15 @@ class Util
         }
         // Reset indices:
         $array = array_values($array);
+    }
+
+    /**
+     * @param string $str
+     * @return int
+     * @psalm-suppress InternalMethod
+     */
+    public static function strlen($str)
+    {
+        return \ParagonIE_Sodium_Core_Util::strlen($str);
     }
 }
