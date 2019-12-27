@@ -11,15 +11,15 @@ parties.
 
 ### Components
 
-| **Documentation Name** | **Fully Qualified Class/Interface Name** | **Description** |
-|---|---|---|
-| `Action` | `ParagonIE\Gossamer\Protocol\Action` | Describes a change to make: Adding/revoking public keys or releases. |
-| `Message` | `ParagonIE\Gossamer\Protocol\Message` | A serialized `Action`. |
-| `SignedMessage` | `ParagonIE\Gossamer\Protocol\SignedMessage` | A cryptographically signed (and identity-bound) `Message`. |
-| `Packet` | `ParagonIE\Gossamer\Protocol\Packet` | HTTP request or response (i.e. to/from a cryptographic ledger) |
-| `Scribe` | `ParagonIE\Gossamer\ScribeInterface` | Publishes `SignedMessage`s to a ledger. |
-| `ReleaseSigner` | `ParagonIE\Gossamer\Release\Signer` | Signs a file with your secret key. |
-| `ReleaseVerifier` | `ParagonIE\Gossamer\Release\Verifier` | Verifies a file against your public key. |
+| **Documentation Name** | **Description** |
+|---|---|
+| [`Action`](reference/Protocol/Action.md) | Describes a change to make: Adding/revoking public keys or releases. |
+| [`Message`](reference/Protocol/Message.md) | A serialized `Action`. |
+| [`SignedMessage`](reference/Protocol/SignedMessage.md) | A cryptographically signed (and identity-bound) `Message`. |
+| [`Packet`](reference/Protocol/Packet.md) | HTTP request or response (i.e. to/from a cryptographic ledger) |
+| [`Scribe`](reference/ScribeInterface.md) | Publishes `SignedMessage`s to a ledger. |
+| [`ReleaseSigner`](reference/Release/Signer.md) | Signs a file with your secret key. |
+| [`ReleaseVerifier`](reference/Release/Verifier.md) | Verifies a file against your public key. |
 
 ### Gossamer PKI Use Cases
 
