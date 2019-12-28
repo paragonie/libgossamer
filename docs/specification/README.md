@@ -184,6 +184,8 @@ action is encountered, then it **MUST** be created in the local key store.
 If the `provider` was found, the `SignedMessage` that encapsulates this Action 
 must be signed by the same provider (or the Super Provider, if applicable).
 
+When this action is performed, it should insert a new row in a database.
+
 #### RevokeKey
 
 A `RevokeKey` action **MUST** contain the following fields:
@@ -200,6 +202,9 @@ throwing an Exception.
 
 The `SignedMessage` that encapsulates this Action must be signed by the provider
 (or the Super Provider, if applicable).
+
+When this action is performed, it should update an existing row in a database
+to mark the row as revoked.
 
 #### AppendUpdate
 
@@ -221,6 +226,8 @@ means throwing an Exception.
 The `SignedMessage` that encapsulates this Action must be signed by the
 correct provider (or the Super Provider, if applicable).
 
+When this action is performed, it should insert a new row in a database.
+
 #### RevokeUpdate
 
 A `RevokeUpdate` action **MUST** contain the following fields:
@@ -239,3 +246,6 @@ means throwing an Exception.
 
 The `SignedMessage` that encapsulates this Action must be signed by the
 correct provider (or the Super Provider, if applicable).
+
+When this action is performed, it should update an existing row in a database
+to mark the row as revoked.
