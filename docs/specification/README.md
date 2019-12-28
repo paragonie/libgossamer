@@ -88,3 +88,46 @@ Internally, these keywords are referred to as `verbs`.
 
 ## The Gossamer Protocol
 
+### Serialization Formats
+
+**Actions** are serialized as JSON-encoded strings inside of a **Message**.
+Example message:
+
+```json
+{
+  "verb": "AppendKey",
+  "provider": "foo",
+  "public-key": "..."
+}
+```
+
+**Messages** that are signed by a **provider** become a **SignedMessage**.
+Example signed message:
+
+```json
+{
+  "signature": "...",
+  "message": "{\"verb\":\"AppendKey\",\"provider\":\"foo\",\"public-key\":\"foo\"}",
+  "provider": "foo",
+  "public-key": ""
+}
+```
+
+Note that the outermost `public-key` is blank on the first `AppendKey`
+operation for a given **provider**.
+
+**SignedMessages** are serialized as a JSON string and stored in the ledger.
+
+Although pretty-printing was used in the examples above, it is strictly optional.
+In libgossamer, we omit pretty-printing in favor of a flat, one-line JSON string,
+like so:
+
+```json
+{"signature":"...","message":"{\"verb\":\"AppendKey\",\"provider\":\"foo\",\"public-key\":\"foo\"}","provider":"foo","public-key":""}
+```
+
+At the deepest level, `signature` covers the `message` contents, as a literal
+string. Signatures MUST be base64url-encoded Ed25519 signatures.
+ 
+Base64url is defined in [RFC 4648](https://tools.ietf.org/html/rfc4648).  
+Ed25519 is defined in [RFC 8032](https://tools.ietf.org/html/rfc8032).
