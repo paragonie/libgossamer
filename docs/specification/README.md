@@ -16,7 +16,7 @@ straightforward flow to the components.
 as [Chronicle](https://github.com/paragonie/chronicle) or a 
 [Trillian](https://github.com/google/trillian) personality). This ledger is
 an append-only, immutable, replicated record of **signed messages** which
-dictate changes (**actions**), which are applied to the **local keystore**.
+dictate changes (**actions**) to be applied to the **local keystore**.
 
 When you publish a new record to the ledger, it will ultimately be reflected in
 the local keystore of every participant in your network.
