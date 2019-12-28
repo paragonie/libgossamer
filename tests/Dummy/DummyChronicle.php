@@ -119,6 +119,9 @@ class DummyChronicle
      */
     public function getRecordsSince($summaryHash)
     {
+        if (empty($summaryHash)) {
+            return $this->export();
+        }
         $return = array();
         $match = Util::rawBinary($summaryHash, 32);
         $found = false;
