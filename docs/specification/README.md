@@ -1,4 +1,4 @@
-# Gossamer Protocol Specification
+# Gossamer Specification
 
 The aim of Gossamer is to allow automatic key/update trust in a way that can be
 audited by independent third parties.
