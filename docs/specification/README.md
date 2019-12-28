@@ -21,7 +21,7 @@ dictate changes (**actions**), which are applied to the **local keystore**.
 When you publish a new record to the ledger, it will ultimately be reflected in
 the local keystore of every participant in your network.
 
-There are four changes that can be performed in the Gossamer protocol:
+There are four types of actions that can be performed in the Gossamer protocol:
 
 1. `AppendKey` - Adds a **verification key** (Ed25519 Public Key) to the local
    keystore. The new verification key is bound cryptographically a specific
@@ -39,6 +39,8 @@ There are four changes that can be performed in the Gossamer protocol:
    the normal channels).
 4. `RevokeUpdate` - Revokes a specific update. This should only be used in the
    event of malware or significant stability concerns.
+
+Internally, these keywords are referred to as `verbs`.
 
 ### Security Goals and Desired Properties
  
