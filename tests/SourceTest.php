@@ -81,6 +81,9 @@ class SourceTest extends TestCase
             );
             $since = $this->source->getRecordsSince($latest['summary'])
                 ->extractAllFromChronicleResponse();
+            $single = $this->source->getRecordsSince($latest['summary'])
+                ->extractFromChronicleResponse();
+            $this->assertSame($single->toString(), $since[0]->toString());
             $this->assertSame($n, count($since));
         }
     }

@@ -52,12 +52,14 @@ class Response extends Packet
             if (!isset($contents['provider'])) {
                 throw new GossamerException('Key "provider" not found in "contents" at index ' . $index . '.');
             }
-            $messages []= SignedMessage::init(
+            $signedMessage = SignedMessage::init(
                 (string) $contents['message'],
                 (string) $contents['signature'],
                 (string) $contents['provider'],
                 (string) (isset($contents['publickey']) ? $contents['publickey'] : '')
             );
+            $signedMessage->setMeta('summary-hash', $res['summary']);
+            $messages []= $signedMessage;
         }
         return $messages;
     }
@@ -99,11 +101,13 @@ class Response extends Packet
         if (!isset($contents['provider'])) {
             throw new GossamerException('Key "provider" not found in "contents" at index ' . $index . '.');
         }
-        return SignedMessage::init(
+        $signedMessage = SignedMessage::init(
             (string) $contents['message'],
             (string) $contents['signature'],
             (string) $contents['provider'],
             (string) (isset($contents['publickey']) ? $contents['publickey'] : '')
         );
+        $signedMessage->setMeta('summary-hash', $res['summary']);
+        return $signedMessage;
     }
 }
