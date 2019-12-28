@@ -107,7 +107,7 @@ Example signed message:
 ```json
 {
   "signature": "...",
-  "message": "{\"verb\":\"AppendKey\",\"provider\":\"foo\",\"public-key\":\"foo\"}",
+  "message": "{\"verb\":\"AppendKey\",\"provider\":\"foo\",\"public-key\":\"...\"}",
   "provider": "foo",
   "public-key": ""
 }
@@ -123,7 +123,7 @@ In libgossamer, we omit pretty-printing in favor of a flat, one-line JSON string
 like so:
 
 ```json
-{"signature":"...","message":"{\"verb\":\"AppendKey\",\"provider\":\"foo\",\"public-key\":\"foo\"}","provider":"foo","public-key":""}
+{"signature":"...","message":"{\"verb\":\"AppendKey\",\"provider\":\"foo\",\"public-key\":\"...\"}","provider":"foo","public-key":""}
 ```
 
 At the deepest level, `signature` covers the `message` contents, as a literal
