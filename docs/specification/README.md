@@ -13,7 +13,7 @@ straightforward flow to the components.
 # Contents
 
  * [Gossamer Overview](Overview.md)
-   * [Security Goals and Desired Properties](#security-goals-and-desired-properties)
+   * [Security Goals and Desired Properties](Overview.md#security-goals-and-desired-properties)
  * [The Gossamer Protocol](Protocol.md)
    * [Serialization Formats](Protocol.md#serialization-formats)
    * [The Super Provider](Protocol.md#the-super-provider)
