@@ -10,6 +10,8 @@ use ParagonIE\Gossamer\GossamerException;
  * An implementation of `\ParagonIE\Gossamer\DbInterface` that wraps `\wpdb`
  * 
  * @package ParagonIE\Gossamer\Db
+ * @psalm-suppress MixedAssignment
+ * @psalm-suppress UndefinedMethod
  */
 class Wp implements DbInterface
 {
@@ -280,6 +282,7 @@ class Wp implements DbInterface
 
             $packageId = $this->db->insert_id;
         } else {
+            /** @var int */
             $packageId = $packageId[0];
         }
 
@@ -311,6 +314,7 @@ class Wp implements DbInterface
 
             $providerId = $this->db->insert_id;
         } else {
+            /** @var int */
             $providerId = $providerId[0];
         }
 
