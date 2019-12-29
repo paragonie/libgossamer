@@ -10,8 +10,6 @@ use ParagonIE\Gossamer\GossamerException;
  * An implementation of `\ParagonIE\Gossamer\DbInterface` that wraps `\wpdb`
  * 
  * @package ParagonIE\Gossamer\Db
- * @psalm-suppress MixedAssignment
- * @psalm-suppress UndefinedMethod
  */
 class Wp implements DbInterface
 {
