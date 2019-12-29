@@ -136,6 +136,50 @@ if (class_exists('wbdb')) {
  * @method string  get_caller()
  * @method string|null db_version()
  */
-class wpdb {
+abstract class wpdb
+{
+    /**
+     * @var int
+     */
+    public $insert_id;
 
+    /**
+     * @param string $query
+     * @param mixed ...$args
+     * @return string|void
+     */
+    abstract public function prepare($query, ...$args);
+
+    /**
+     * @param string|null $query
+     * @param int $x
+     * @return array
+     */
+    abstract public function get_col($query = null, $x = 0);
+
+    /**
+     * @param string|null $query
+     * @param int $x
+     * @param int $y
+     * @return string|null
+     */
+    abstract public function get_var($query = null, $x = 0, $y = 0);
+
+    /**
+     * @param string $table
+     * @param array $data
+     * @param array $where
+     * @param array|string|null $format
+     * @param array|string|null $where_format
+     * @return int|bool
+     */
+    abstract public function update($table, $data, $where, $format = null, $where_format = null);
+
+    /**
+     * @param string $table
+     * @param array $data
+     * @param array|string|null $format
+     * @return int|bool
+     */
+    abstract public function insert($table, $data, $format = null);
 }
