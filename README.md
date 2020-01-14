@@ -16,7 +16,7 @@ The code syntax is compatible with PHP 5.3+, but this is only intended for PHP 5
 **This is the low-level library.** If you're looking for something you can use in
 one of your projects...
 
-* (TODO: Put links to higher-level abstractions here.)
+* [Gossamer Standalone Server](https://github.com/paragonie/gossamer-server)
 
 ## Documentation
 
