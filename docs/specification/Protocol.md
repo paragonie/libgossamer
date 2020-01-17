@@ -197,3 +197,52 @@ Attestations **MUST** be one of the following:
 | `spot-check` | The attestor provided a spot check for this update.                  |
 | `reviewed`   | The attestor performed a code review for this update.                |
 | `sec-audit`  | This update passed a security audit performed by the attestor.       |
+
+## Invalid Messages in the Ledger
+
+Any records in the ledger that do not contain a valid JSON message 
+must be skipped.
+
+Any records in the ledger that contain a valid JSON message, but
+do not contain a `verb` field conforming to one of the actions defined in
+this specification, must be skipped.
+
+The above two rules allow a single ledger instance to be used for
+multiple purposes without interfering with the normal operation of the
+Gossamer protocol.
+
+### Validation
+
+Any records that contain a JSON message and a `verb` field
+conforming to an action, but are somehow invalid (as defined by the rules
+of each particular `verb`; e.g. missing a mandatory field) but **NOT**
+malicious (e.g. not violating a rule about who can author an `AppendKey`), 
+**MAY** be skipped, but the discrepancy **SHOULD** also be logged.
+
+Alternatively, this can be a protocol error until the operator manually
+skips the invalid message by fast-forwarding to the next ledger record.
+
+### Security
+
+Any records that obey the JSON message rules but violate the security 
+requirements of an action (e.g. trying to append an update for a different
+provider, except if issued by the Super Provider) must constitute a protocol 
+error.
+
+### Protocol Error Handling
+ 
+The protocol will be stopped until a manual action is performed. 
+
+To recover, an operator **MUST** discard the malicious message in order and
+fast-forward to the next ledger record. The operator **SHOULD** investigate
+the cause of the breakage to ensure they are not the subject of a targeted 
+attack.
+ 
+In the event of a network attack that led to invalid records being
+replicated, operators **MAY** empty their keystore and replay the entire
+protocol from the first record once they are sure the network is consistent
+and trustworthy.
+
+Tooling **SHOULD** be provided to allow an operator to specify the new
+savepoint (summary hash, Merkle root, etc.) for the cryptographic ledger
+powering the Gossamer protocol.
