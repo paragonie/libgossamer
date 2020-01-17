@@ -96,6 +96,13 @@ action is encountered, then it **MUST** be created in the local key store.
 If the `provider` was found, the `SignedMessage` that encapsulates this Action 
 must be signed by the same provider (or the Super Provider, if applicable).
 
+An `AppendKey` action **MAY** contain a `limited` field, which must be boolean.
+If it is absent, it is implicitly false. The first `AppendKey` for a provider
+**MUST NOT** have `limited` set to `TRUE`.
+ 
+The provider must have at least one non-limited, non-revoked key in order to
+create limited keys.
+
 When this action is performed, it should insert a new row in a database.
 
 ### RevokeKey
@@ -161,3 +168,32 @@ correct provider (or the Super Provider, if applicable).
 
 When this action is performed, it should update an existing row in a database
 to mark the row as revoked.
+
+### AttestUpdate
+
+A `AttestUpdate` action **MUST** contain the following fields:
+
+| Name          | Description                              |
+|---------------|------------------------------------------|
+| `verb`        | Must be `AttestUpdate`.                  |
+| `provider`    | Provider name.                           |
+| `package`     | Name of the package (owned by provider). |
+| `release`     | Version of the package in question.      |
+| `attestation` | See below.                               |
+
+If the `provider` is not found in the local key store when an `RevokeUpdate`
+action is encountered, an error **MUST** be raised. In most languages, this
+means throwing an Exception.
+
+An attestation is a NOP for the purposes of Gossamer's goals (key management
+and code-signing). However, other protocols **MAY** wish to use
+attestations in order to provide third-party oversight into the protocol.
+
+Attestations **MUST** be one of the following:
+
+| Attestation  | Meaning                                                              |
+|--------------|----------------------------------------------------------------------|
+| `reproduced` | The attestor was able to reproduce this update from the source code. |
+| `spot-check` | The attestor provided a spot check for this update.                  |
+| `reviewed`   | The attestor performed a code review for this update.                |
+| `sec-audit`  | This update passed a security audit performed by the attestor.       |
