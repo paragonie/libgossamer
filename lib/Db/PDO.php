@@ -1,5 +1,6 @@
 <?php
 namespace ParagonIE\Gossamer\Db;
+
 use ParagonIE\EasyDB\EasyDB;
 use ParagonIE\Gossamer\DbInterface;
 use ParagonIE\Gossamer\GossamerException;
@@ -71,18 +72,20 @@ class PDO implements DbInterface
     /**
      * @param string $provider
      * @param string $publicKey
+     * @param bool $limited
      * @param array $meta
      * @param string $hash
      * @return bool
      * @throws GossamerException
      */
-    public function appendKey($provider, $publicKey, array $meta = array(), $hash = '')
+    public function appendKey($provider, $publicKey, $limited = false, array $meta = array(), $hash = '')
     {
         $providerId = $this->getProviderId($provider);
 
         $inserts = [
             'provider' => $providerId,
             'publickey' => $publicKey,
+            'limited' => $limited,
             'metadata' => json_encode($meta)
         ];
         if (!empty($hash)) {

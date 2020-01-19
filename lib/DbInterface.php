@@ -24,11 +24,12 @@ interface DbInterface
     /**
      * @param string $provider
      * @param string $publicKey
+     * @param bool $limited,
      * @param array $meta
      * @param string $hash
      * @return bool
      */
-    public function appendKey($provider, $publicKey, array $meta = array(), $hash = '');
+    public function appendKey($provider, $publicKey, $limited = false, array $meta = array(), $hash = '');
 
     /**
      * @param string $provider

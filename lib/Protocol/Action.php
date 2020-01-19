@@ -165,6 +165,9 @@ class Action
         );
     }
 
+    /**
+     * @return string
+     */
     public function getAttestation()
     {
         return $this->attestation;
