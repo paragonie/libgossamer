@@ -14,6 +14,9 @@ use PDO as BasePDO;
  */
 class PDO implements DbInterface
 {
+    /** @var ?callable $attestCallback */
+    private $attestCallback = null;
+
     /** @var EasyDB $db */
     private $db;
 
@@ -123,6 +126,40 @@ class PDO implements DbInterface
         );
         $this->updateMeta($hash);
         return $this->db->commit();
+    }
+
+    /**
+     * @param callable $callback
+     * @return self
+     */
+    public function setAttestCallback($callback)
+    {
+        $this->attestCallback = $callback;
+        return $this;
+    }
+
+    /**
+     * @param string $provider
+     * @param string $package
+     * @param string $release
+     * @param string $attestation
+     * @param array $meta
+     * @param string $hash
+     * @return bool
+     */
+    public function attestUpdate(
+        $provider,
+        $package,
+        $release,
+        $attestation,
+        array $meta = array(),
+        $hash = ''
+    ) {
+        if (is_callable($this->attestCallback)) {
+            $cb = $this->attestCallback;
+            return (bool) $cb($provider, $package, $release, $attestation, $meta, $hash);
+        }
+        return false;
     }
 
     /**

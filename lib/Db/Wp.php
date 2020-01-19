@@ -13,6 +13,9 @@ use ParagonIE\Gossamer\GossamerException;
  */
 class Wp implements DbInterface
 {
+    /** @var ?callable $attestCallback */
+    private $attestCallback = null;
+
     /** @var \wpdb */
     private $db;
 
@@ -130,6 +133,39 @@ class Wp implements DbInterface
         return $updatedKey && $updatedHash;
     }
 
+    /**
+     * @param callable $callback
+     * @return self
+     */
+    public function setAttestCallback($callback)
+    {
+        $this->attestCallback = $callback;
+        return $this;
+    }
+
+    /**
+     * @param string $provider
+     * @param string $package
+     * @param string $release
+     * @param string $attestation
+     * @param array $meta
+     * @param string $hash
+     * @return bool
+     */
+    public function attestUpdate(
+        $provider,
+        $package,
+        $release,
+        $attestation,
+        array $meta = array(),
+        $hash = ''
+    ) {
+        if (is_callable($this->attestCallback)) {
+            $cb = $this->attestCallback;
+            return (bool) $cb($provider, $package, $release, $attestation, $meta, $hash);
+        }
+        return false;
+    }
 
     /**
      * @param string $provider

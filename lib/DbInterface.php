@@ -62,6 +62,24 @@ interface DbInterface
     /**
      * @param string $provider
      * @param string $package
+     * @param string $release
+     * @param string $attestation
+     * @param array $meta
+     * @param string $hash
+     * @return bool
+     */
+    public function attestUpdate(
+        $provider,
+        $package,
+        $release,
+        $attestation,
+        array $meta = array(),
+        $hash = ''
+    );
+
+    /**
+     * @param string $provider
+     * @param string $package
      * @param string $publicKey
      * @param string $release
      * @param array $meta
