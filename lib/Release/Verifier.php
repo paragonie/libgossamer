@@ -32,11 +32,7 @@ class Verifier extends Common implements VerifierInterface
         $valid = false;
 
         foreach ($publicKeys as $pk) {
-            $valid = $valid || sodium_crypto_sign_verify_detached(
-                $sig,
-                $prehash,
-                Util::rawBinary($pk, 32)
-            );
+            $valid = $valid || $this->backend->verify($prehash, $sig, $pk);
         }
         return $valid;
     }
