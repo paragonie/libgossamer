@@ -1,5 +1,6 @@
 <?php
 namespace ParagonIE\Gossamer\Db;
+
 use ParagonIE\EasyDB\EasyDB;
 use ParagonIE\Gossamer\DbInterface;
 use ParagonIE\Gossamer\GossamerException;
@@ -14,6 +15,9 @@ use PDO as BasePDO;
  */
 class PDO implements DbInterface
 {
+    /** @var ?callable $attestCallback */
+    private $attestCallback = null;
+
     /** @var EasyDB $db */
     private $db;
 
@@ -68,18 +72,29 @@ class PDO implements DbInterface
     /**
      * @param string $provider
      * @param string $publicKey
+     * @param bool $limited
      * @param array $meta
      * @param string $hash
      * @return bool
      * @throws GossamerException
      */
-    public function appendKey($provider, $publicKey, array $meta = array(), $hash = '')
+    public function appendKey($provider, $publicKey, $limited = false, array $meta = array(), $hash = '')
     {
         $providerId = $this->getProviderId($provider);
+        if ($limited) {
+            // Get non-limited keys
+            $existingKeys = $this->getPublicKeysForProvider($provider, false);
+            if (count($existingKeys) < 1) {
+                throw new GossamerException(
+                    'Attempting to append a limited key without a pre-existing non-limited key.'
+                );
+            }
+        }
 
         $inserts = [
             'provider' => $providerId,
             'publickey' => $publicKey,
+            'limited' => $limited,
             'metadata' => json_encode($meta)
         ];
         if (!empty($hash)) {
@@ -123,6 +138,42 @@ class PDO implements DbInterface
         );
         $this->updateMeta($hash);
         return $this->db->commit();
+    }
+
+    /**
+     * @param callable $callback
+     * @return self
+     */
+    public function setAttestCallback($callback)
+    {
+        $this->attestCallback = $callback;
+        return $this;
+    }
+
+    /**
+     * @param string $provider
+     * @param string $package
+     * @param string $release
+     * @param string $attestor
+     * @param string $attestation
+     * @param array $meta
+     * @param string $hash
+     * @return bool
+     */
+    public function attestUpdate(
+        $provider,
+        $package,
+        $release,
+        $attestor,
+        $attestation,
+        array $meta = array(),
+        $hash = ''
+    ) {
+        if (is_callable($this->attestCallback)) {
+            $cb = $this->attestCallback;
+            return (bool) $cb($provider, $package, $release, $attestor, $attestation, $meta, $hash);
+        }
+        return false;
     }
 
     /**
@@ -222,15 +273,20 @@ class PDO implements DbInterface
 
     /**
      * @param string $providerName
+     * @param ?bool $limited
      * @return array<array-key, string>
      */
-    public function getPublicKeysForProvider($providerName)
+    public function getPublicKeysForProvider($providerName, $limited = null)
     {
+        $suffix = '';
+        if (!is_null($limited)) {
+            $suffix = $limited ? ' AND pk.limited' : ' AND NOT pk.limited';
+        }
         /** @var array<array-key, string> $pubKeys */
         $pubKeys = $this->db->col(
             "SELECT pk.publickey FROM gossamer_provider_publickeys pk
              JOIN gossamer_providers prov ON pk.provider = prov.id
-             WHERE prov.name = ? AND NOT pk.revoked",
+             WHERE prov.name = ? AND NOT pk.revoked" . $suffix,
             0,
             $providerName
         );
@@ -320,5 +376,23 @@ class PDO implements DbInterface
             );
         }
         return (int) $publicKeyId;
+    }
+
+    /**
+     * Is the "limited" flag set to TRUE on this key?
+     *
+     * @param string $providerName
+     * @param string $publicKey
+     * @return bool
+     */
+    public function isKeyLimited($providerName, $publicKey)
+    {
+        return (bool) $this->db->cell(
+            "SELECT pk.limited FROM gossamer_provider_publickeys pk " .
+            "JOIN gossamer_providers prov ON pk.provider = prov.id " .
+            "WHERE prov.name = ? AND NOT pk.revoked AND pk.publickey = ?",
+            $providerName,
+            $publicKey
+        );
     }
 }

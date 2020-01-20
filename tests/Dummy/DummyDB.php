@@ -19,6 +19,9 @@ class DummyDB implements DbInterface
     /** @var array $state */
     protected $state;
 
+    /** @var ?callable $attestCallback */
+    protected $attestCallback = null;
+
     /**
      * @return string
      */
@@ -84,12 +87,13 @@ class DummyDB implements DbInterface
     /**
      * @param string $provider
      * @param string $publicKey
+     * @param bool $limited
      * @param array $meta
      * @param string $hash
      * @return bool
      * @throws \SodiumException
      */
-    public function appendKey($provider, $publicKey, array $meta = array(), $hash = '')
+    public function appendKey($provider, $publicKey, $limited = false, array $meta = array(), $hash = '')
     {
         $providerId = $this->getProviderId($provider);
         $publicKeyId = $this->getPublicKeyId($publicKey, $providerId);
@@ -115,6 +119,42 @@ class DummyDB implements DbInterface
         $this->state[self::TABLE_PUBLIC_KEYS][$publicKeyId]['revoked'] = true;
         $this->updateMeta($hash);
         return true;
+    }
+
+    /**
+     * @param callable $callback
+     * @return self
+     */
+    public function setAttestCallback($callback)
+    {
+        $this->attestCallback = $callback;
+        return $this;
+    }
+
+    /**
+     * @param string $provider
+     * @param string $package
+     * @param string $release
+     * @param string $attestor
+     * @param string $attestation
+     * @param array $meta
+     * @param string $hash
+     * @return bool
+     */
+    public function attestUpdate(
+        $provider,
+        $package,
+        $release,
+        $attestor,
+        $attestation,
+        array $meta = array(),
+        $hash = ''
+    ) {
+        if (is_callable($this->attestCallback)) {
+            $cb = $this->attestCallback;
+            return (bool) $cb($provider, $package, $release, $attestor, $attestation, $meta, $hash);
+        }
+        return false;
     }
 
     /**
@@ -220,16 +260,22 @@ class DummyDB implements DbInterface
 
     /**
      * @param string $providerName
+     * @param ?bool $limited
      * @return array<array-key, string>
      * @throws \SodiumException
      */
-    public function getPublicKeysForProvider($providerName)
+    public function getPublicKeysForProvider($providerName, $limited = null)
     {
         $providerId = $this->getProviderId($providerName);
         $return = array();
         foreach ($this->state[self::TABLE_PUBLIC_KEYS] as $row) {
             if ($providerId !== $row['provider']) {
                 continue;
+            }
+            if (!is_null($limited)) {
+                if ($limited !== $row['limited']) {
+                    continue;
+                }
             }
             $return []= $row['publickey'];
         }
@@ -287,5 +333,15 @@ class DummyDB implements DbInterface
                 $this->cacheKey
             )
         );
+    }
+
+    /**
+     * @param string $providerName
+     * @param string $publicKey
+     * @return bool
+     */
+    public function isKeyLimited($providerName, $publicKey)
+    {
+        return false;
     }
 }

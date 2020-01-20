@@ -15,9 +15,19 @@ class Action
     const VERB_REVOKE_KEY = 'RevokeKey';
     const VERB_APPEND_UPDATE = 'AppendUpdate';
     const VERB_REVOKE_UPDATE = 'RevokeUpdate';
+    const VERB_ATTEST_UPDATE = 'AttestUpdate';
+
+    /** @var string $attestation */
+    private $attestation = '';
+
+    /** @var string $targetProvider */
+    private $targetProvider = '';
 
     /** @var string $hash */
     private $hash = '';
+
+    /** @var bool $limited */
+    private $limited = false;
 
     /** @var array $meta */
     private $meta = array();
@@ -70,6 +80,16 @@ class Action
             case self::VERB_REVOKE_KEY:
                 $action->provider = (string) $json['provider'];
                 $action->publicKey = (string) $json['public-key'];
+                if (!empty($json['limited'])) {
+                    $action->limited = true;
+                }
+                break;
+            case self::VERB_ATTEST_UPDATE:
+                $action->provider = (string) $json['attestor'];
+                $action->attestation = (string) $json['attestation'];
+                $action->targetProvider = (string) $json['provider'];
+                $action->package = (string) $json['package'];
+                $action->release = (string) $json['release'];
                 break;
             case self::VERB_APPEND_UPDATE:
             case self::VERB_REVOKE_UPDATE:
@@ -114,13 +134,23 @@ class Action
     public function toJsonString()
     {
         $array = array('verb' => $this->verb);
+        if (!empty($this->limited)) {
+            $array['limited'] = true;
+        }
         if (!empty($this->meta)) {
             $array['meta'] = $this->meta;
         }
         if (!empty($this->package)) {
             $array['package'] = $this->package;
         }
-        if (!empty($this->provider)) {
+        if ($this->verb === self::VERB_ATTEST_UPDATE) {
+            if (!empty($this->provider)) {
+                $array['attestor'] = $this->provider;
+            }
+            if (!empty($this->targetProvider)) {
+                $array['provider'] = $this->targetProvider;
+            }
+        } elseif (!empty($this->provider)) {
             $array['provider'] = $this->provider;
         }
         if (!empty($this->publicKey)) {
@@ -147,6 +177,22 @@ class Action
             $this->provider,
             $signingKey
         );
+    }
+
+    /**
+     * @return string
+     */
+    public function getAttestation()
+    {
+        return $this->attestation;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTargetProvider()
+    {
+        return $this->targetProvider;
     }
 
     /**
@@ -230,6 +276,7 @@ class Action
                 return $db->appendKey(
                     $this->provider,
                     $this->publicKey,
+                    $this->limited,
                     $this->meta,
                     $this->hash
                 );
@@ -259,9 +306,41 @@ class Action
                     $this->meta,
                     $this->hash
                 );
+            case self::VERB_ATTEST_UPDATE:
+                return $db->attestUpdate(
+                    $this->targetProvider,
+                    $this->package,
+                    $this->release,
+                    $this->provider,
+                    $this->attestation,
+                    $this->meta,
+                    $this->hash
+                );
             default:
                 return false;
         }
+    }
+
+    /**
+     * @param string $attestation
+     * @return self
+     */
+    public function withAttestation($attestation)
+    {
+        $self = clone $this;
+        $self->attestation = $attestation;
+        return $self;
+    }
+
+    /**
+     * @param string $targetProvider
+     * @return self
+     */
+    public function withTargetProvider($targetProvider)
+    {
+        $self = clone $this;
+        $self->targetProvider = $targetProvider;
+        return $self;
     }
 
     /**
@@ -272,6 +351,17 @@ class Action
     {
         $self = clone $this;
         $self->hash = $hash;
+        return $self;
+    }
+
+    /**
+     * @param bool $limited
+     * @return self
+     */
+    public function withLimited($limited)
+    {
+        $self = clone $this;
+        $self->limited = $limited;
         return $self;
     }
 

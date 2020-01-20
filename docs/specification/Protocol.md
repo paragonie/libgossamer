@@ -179,15 +179,21 @@ A `AttestUpdate` action **MUST** contain the following fields:
 | `provider`    | Provider name.                           |
 | `package`     | Name of the package (owned by provider). |
 | `release`     | Version of the package in question.      |
+| `attestor`    | Provider attesting this package.         |
 | `attestation` | See below.                               |
 
-If the `provider` is not found in the local key store when an `RevokeUpdate`
+If the `provider` is not found in the local key store when an `AttestUpdate`
 action is encountered, an error **MUST** be raised. In most languages, this
 means throwing an Exception.
 
-An attestation is a NOP for the purposes of Gossamer's goals (key management
-and code-signing). However, other protocols **MAY** wish to use
-attestations in order to provide third-party oversight into the protocol.
+If the `attestor` is not found in the local key store when an `AttestUpdate`
+action is encountered, an error **MUST** be raised. In most languages, this
+means throwing an Exception.
+
+An attestation is a [NOP](https://en.wikipedia.org/wiki/NOP_(code)) for the
+purposes of Gossamer's goals (key management and code-signing). However, other
+protocols **MAY** wish to use attestations in order to provide third-party
+oversight into the protocol.
 
 Attestations **MUST** be one of the following:
 

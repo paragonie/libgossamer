@@ -24,11 +24,12 @@ interface DbInterface
     /**
      * @param string $provider
      * @param string $publicKey
+     * @param bool $limited,
      * @param array $meta
      * @param string $hash
      * @return bool
      */
-    public function appendKey($provider, $publicKey, array $meta = array(), $hash = '');
+    public function appendKey($provider, $publicKey, $limited = false, array $meta = array(), $hash = '');
 
     /**
      * @param string $provider
@@ -62,6 +63,26 @@ interface DbInterface
     /**
      * @param string $provider
      * @param string $package
+     * @param string $release
+     * @param string $attestor
+     * @param string $attestation
+     * @param array $meta
+     * @param string $hash
+     * @return bool
+     */
+    public function attestUpdate(
+        $provider,
+        $package,
+        $release,
+        $attestor,
+        $attestation,
+        array $meta = array(),
+        $hash = ''
+    );
+
+    /**
+     * @param string $provider
+     * @param string $package
      * @param string $publicKey
      * @param string $release
      * @param array $meta
@@ -85,9 +106,10 @@ interface DbInterface
 
     /**
      * @param string $providerName
+     * @param ?bool $limited
      * @return array<array-key, string>
      */
-    public function getPublicKeysForProvider($providerName);
+    public function getPublicKeysForProvider($providerName, $limited = null);
 
     /**
      * @param string $packageName
@@ -110,4 +132,13 @@ interface DbInterface
      * @throws GossamerException
      */
     public function getPublicKeyId($publicKey, $providerId);
+
+    /**
+     * Is the "limited" flag set to TRUE on this key?
+     *
+     * @param string $providerName
+     * @param string $publicKey
+     * @return bool
+     */
+    public function isKeyLimited($providerName, $publicKey);
 }

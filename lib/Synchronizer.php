@@ -168,7 +168,6 @@ class Synchronizer
         /** @var SignedMessage $signedMessage */
         foreach ($signedMessages as $signedMessage) {
             $summaryhash = $signedMessage->getMeta('summaryhash');
-            $publicKey = $signedMessage->getMeta('publickey');
             if ($verifier->verify($summaryhash)) {
                 $message = $signedMessage->verifyAndExtract($this->db, $this->superProvider);
                 $action = Action::fromMessage($message);
