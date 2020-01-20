@@ -135,6 +135,7 @@ class DummyDB implements DbInterface
      * @param string $provider
      * @param string $package
      * @param string $release
+     * @param string $attestor
      * @param string $attestation
      * @param array $meta
      * @param string $hash
@@ -144,17 +145,17 @@ class DummyDB implements DbInterface
         $provider,
         $package,
         $release,
+        $attestor,
         $attestation,
         array $meta = array(),
         $hash = ''
     ) {
         if (is_callable($this->attestCallback)) {
             $cb = $this->attestCallback;
-            return (bool) $cb($provider, $package, $release, $attestation, $meta, $hash);
+            return (bool) $cb($provider, $package, $release, $attestor, $attestation, $meta, $hash);
         }
         return false;
     }
-
 
     /**
      * @param string $provider

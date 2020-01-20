@@ -64,6 +64,7 @@ interface DbInterface
      * @param string $provider
      * @param string $package
      * @param string $release
+     * @param string $attestor
      * @param string $attestation
      * @param array $meta
      * @param string $hash
@@ -73,6 +74,7 @@ interface DbInterface
         $provider,
         $package,
         $release,
+        $attestor,
         $attestation,
         array $meta = array(),
         $hash = ''

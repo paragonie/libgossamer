@@ -17,8 +17,11 @@ class Action
     const VERB_REVOKE_UPDATE = 'RevokeUpdate';
     const VERB_ATTEST_UPDATE = 'AttestUpdate';
 
-    /** @var string $signature */
+    /** @var string $attestation */
     private $attestation = '';
+
+    /** @var string $targetProvider */
+    private $targetProvider = '';
 
     /** @var string $hash */
     private $hash = '';
@@ -82,8 +85,9 @@ class Action
                 }
                 break;
             case self::VERB_ATTEST_UPDATE:
+                $action->provider = (string) $json['attestor'];
                 $action->attestation = (string) $json['attestation'];
-                $action->provider = (string) $json['provider'];
+                $action->targetProvider = (string) $json['provider'];
                 $action->package = (string) $json['package'];
                 $action->release = (string) $json['release'];
                 break;
@@ -130,13 +134,23 @@ class Action
     public function toJsonString()
     {
         $array = array('verb' => $this->verb);
+        if (!empty($this->limited)) {
+            $array['limited'] = true;
+        }
         if (!empty($this->meta)) {
             $array['meta'] = $this->meta;
         }
         if (!empty($this->package)) {
             $array['package'] = $this->package;
         }
-        if (!empty($this->provider)) {
+        if ($this->verb === self::VERB_ATTEST_UPDATE) {
+            if (!empty($this->provider)) {
+                $array['attestor'] = $this->provider;
+            }
+            if (!empty($this->targetProvider)) {
+                $array['provider'] = $this->targetProvider;
+            }
+        } elseif (!empty($this->provider)) {
             $array['provider'] = $this->provider;
         }
         if (!empty($this->publicKey)) {
@@ -171,6 +185,14 @@ class Action
     public function getAttestation()
     {
         return $this->attestation;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTargetProvider()
+    {
+        return $this->targetProvider;
     }
 
     /**
@@ -286,9 +308,10 @@ class Action
                 );
             case self::VERB_ATTEST_UPDATE:
                 return $db->attestUpdate(
-                    $this->provider,
+                    $this->targetProvider,
                     $this->package,
                     $this->release,
+                    $this->provider,
                     $this->attestation,
                     $this->meta,
                     $this->hash
@@ -306,6 +329,17 @@ class Action
     {
         $self = clone $this;
         $self->attestation = $attestation;
+        return $self;
+    }
+
+    /**
+     * @param string $targetProvider
+     * @return self
+     */
+    public function withTargetProvider($targetProvider)
+    {
+        $self = clone $this;
+        $self->targetProvider = $targetProvider;
         return $self;
     }
 
