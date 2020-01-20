@@ -1,12 +1,12 @@
 <?php
-namespace ParagonIE\Gossamer\Release\Backends;
+namespace ParagonIE\Gossamer\CryptoBackends;
 
-use ParagonIE\Gossamer\Release\CryptoBackendInterface;
+use ParagonIE\Gossamer\CryptoBackendInterface;
 use ParagonIE\Gossamer\Util;
 
 /**
  * Class SodiumBackend
- * @package ParagonIE\Gossamer\Release\Backends
+ * @package ParagonIE\Gossamer\Release\CryptoBackends
  */
 class SodiumBackend implements CryptoBackendInterface
 {

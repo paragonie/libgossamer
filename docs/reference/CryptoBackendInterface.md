@@ -1,6 +1,6 @@
 # CryptoBackendInterface
 
-* **Fully Qualified Interface Name**: `ParagonIE\Gossamer\Release\CryptoBackendInterface`
+* **Fully Qualified Interface Name**: `ParagonIE\Gossamer\CryptoBackendInterface`
 
 ## Interface Methods
 

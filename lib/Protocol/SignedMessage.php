@@ -3,6 +3,8 @@ namespace ParagonIE\Gossamer\Protocol;
 
 use ParagonIE\Gossamer\DbInterface;
 use ParagonIE\Gossamer\GossamerException;
+use ParagonIE\Gossamer\CryptoBackends\SodiumBackend;
+use ParagonIE\Gossamer\CryptoBackendInterface;
 use ParagonIE\Gossamer\Util;
 
 /**
@@ -96,13 +98,16 @@ class SignedMessage
      * @param string $contents
      * @param string $provider
      * @param string $secretKey
+     * @param CryptoBackendInterface $backend = null
      * @return SignedMessage
      * @throws \SodiumException
      */
-    public static function sign($contents, $provider, $secretKey)
+    public static function sign($contents, $provider, $secretKey, CryptoBackendInterface $backend = null)
     {
-        $secretKey = Util::rawBinary($secretKey, 64);
-        $sig = sodium_crypto_sign_detached($contents, $secretKey);
+        if (empty($backend)) {
+            $backend = new SodiumBackend();
+        }
+        $sig = $backend->sign($contents, $secretKey);
         return SignedMessage::init(
             $contents,
             sodium_bin2hex($sig),

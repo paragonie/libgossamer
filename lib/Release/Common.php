@@ -1,8 +1,9 @@
 <?php
 namespace ParagonIE\Gossamer\Release;
 
+use ParagonIE\Gossamer\CryptoBackendInterface;
+use ParagonIE\Gossamer\CryptoBackends\SodiumBackend;
 use ParagonIE\Gossamer\GossamerException;
-use ParagonIE\Gossamer\Release\Backends\SodiumBackend;
 
 /**
  * Class Common
@@ -34,8 +35,10 @@ class Common
      * @throws GossamerException
      * @psalm-suppress InternalMethod
      */
-    public function __construct($alg = self::SIGN_ALG_ED25519_SHA384, CryptoBackendInterface $backend = null)
-    {
+    public function __construct(
+        $alg = self::SIGN_ALG_ED25519_SHA384,
+        CryptoBackendInterface $backend = null
+    ) {
         if (empty($backend)) {
             $backend = new SodiumBackend();
         }

@@ -5,6 +5,8 @@ writing code that needs to use the library.
 
 ## Classes
 
+* [Backends](CryptoBackends)
+  * [SodiumBackend](CryptoBackends/SodiumBackend.md)
 * [Db](Db)
   * [PDO](Db/PDO.md)
 * [Http](Http)
@@ -15,10 +17,7 @@ writing code that needs to use the library.
   * [Packet](Protocol/Packet.md)
   * [SignedMessage](Protocol/SignedMessage.md)
 * [Release](Release)
-  * [Backends](Release/Backends)
-    * [SodiumBackend](Release/Backends/SodiumBackend.md)
   * [Common](Release/Common.md)
-  * [CryptoBakendInterface](Release/CryptoBackendInterface.md)
   * [Signer](Release/Signer.md)
   * [Verifier](Release/Verifier.md)
 * [Scribe](Scribe)
@@ -28,6 +27,7 @@ writing code that needs to use the library.
 * [Verifier](Verifier)
   * [Chronicle](Verifier/Chronicle.md)
 * [DbInterface](DbInterface.md)
+* [CryptoBakendInterface](CryptoBackendInterface.md)
 * [GossamerException](GossmerException.md)
 * [HttpInterface](HttpInterface.md)
 * [LedgerInterface](LedgerInterface.md)

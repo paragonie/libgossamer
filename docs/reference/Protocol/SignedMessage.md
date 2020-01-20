@@ -38,6 +38,8 @@
 1. `string` - Contents
 2. `string` - Provider
 3. `string` - Secret Key
+4. [`CryptoProviderBackend`](../CryptoBackendInterface.md) -
+   Optional cryptographic backend. Defaults to [SodiumBackend](../CryptoBackends/SodiumBackend.md).
 
 **Returns** a `SignedMessage` object.
 
