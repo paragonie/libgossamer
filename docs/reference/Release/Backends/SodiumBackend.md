@@ -1,5 +1,7 @@
 # SodiumBackend
 
+* **Fully Qualified Class Name**: `ParagonIE\Gossamer\Release\Backend\SodiumBackend`
+
 ## Class Methods
 
 ### `sign()`
