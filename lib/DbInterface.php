@@ -104,9 +104,10 @@ interface DbInterface
 
     /**
      * @param string $providerName
+     * @param ?bool $limited
      * @return array<array-key, string>
      */
-    public function getPublicKeysForProvider($providerName);
+    public function getPublicKeysForProvider($providerName, $limited = null);
 
     /**
      * @param string $packageName
@@ -129,4 +130,13 @@ interface DbInterface
      * @throws GossamerException
      */
     public function getPublicKeyId($publicKey, $providerId);
+
+    /**
+     * Is the "limited" flag set to TRUE on this key?
+     *
+     * @param string $providerName
+     * @param string $publicKey
+     * @return bool
+     */
+    public function isKeyLimited($providerName, $publicKey);
 }

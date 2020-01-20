@@ -201,28 +201,27 @@ class SignedMessage
      */
     public function verify(DbInterface $db)
     {
+        $action = Action::fromMessage($this->message);
         if (!$db->providerExists($this->provider)) {
-            $action = Action::fromMessage($this->message);
-            try {
-                if (hash_equals(Action::VERB_APPEND_KEY, $action->getVerb())) {
-                    return true;
-                } else {
-                    throw new GossamerException(
-                        'New providers cannot be expected to do anything but add a key'
-                    );
-                }
-            } finally {
-                unset($action);
+            if (hash_equals(Action::VERB_APPEND_KEY, $action->getVerb())) {
+                return true;
+            } else {
+                throw new GossamerException(
+                    'New providers cannot be expected to do anything but add a key'
+                );
             }
         }
 
         if (!empty($this->publicKey)) {
             if ($this->message->signatureValidForPublicKey($this->publicKey)) {
-                return true;
+                return $this->publicKeyCanSignAction($db, $this->publicKey, $action);
             }
         } else {
             $providerKeys = $db->getPublicKeysForProvider($this->provider);
             foreach ($providerKeys as $publicKey) {
+                if (!$this->publicKeyCanSignAction($db, $publicKey, $action)) {
+                    continue;
+                }
                 if ($this->message->signatureValidForPublicKey($publicKey)) {
                     $this->publicKey = $publicKey;
                     return true;
@@ -230,6 +229,26 @@ class SignedMessage
             }
         }
         return false;
+    }
+
+    /**
+     * Is this public key permitted to sign this kind of action?
+     *
+     * Returns FALSE if the key is limited and the action is not AppendUpdate.
+     *
+     * @param DbInterface $db
+     * @param string $publicKey
+     * @param Action $action
+     * @return bool
+     */
+    protected function publicKeyCanSignAction(DbInterface $db, $publicKey, Action $action)
+    {
+        if ($action->getVerb() === Action::VERB_APPEND_UPDATE) {
+            // This is always allowed, even for limited keys.
+            return true;
+        }
+        // The remaining actions are only permitted if the key is not limited.
+        return !$db->isKeyLimited($this->provider, $publicKey);
     }
 
     /**

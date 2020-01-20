@@ -81,6 +81,15 @@ class PDO implements DbInterface
     public function appendKey($provider, $publicKey, $limited = false, array $meta = array(), $hash = '')
     {
         $providerId = $this->getProviderId($provider);
+        if ($limited) {
+            // Get non-limited keys
+            $existingKeys = $this->getPublicKeysForProvider($provider, false);
+            if (count($existingKeys) < 1) {
+                throw new GossamerException(
+                    'Attempting to append a limited key without a pre-existing non-limited key.'
+                );
+            }
+        }
 
         $inserts = [
             'provider' => $providerId,
@@ -262,15 +271,20 @@ class PDO implements DbInterface
 
     /**
      * @param string $providerName
+     * @param ?bool $limited
      * @return array<array-key, string>
      */
-    public function getPublicKeysForProvider($providerName)
+    public function getPublicKeysForProvider($providerName, $limited = null)
     {
+        $suffix = '';
+        if (!is_null($limited)) {
+            $suffix = $limited ? ' AND pk.limited' : ' AND NOT pk.limited';
+        }
         /** @var array<array-key, string> $pubKeys */
         $pubKeys = $this->db->col(
             "SELECT pk.publickey FROM gossamer_provider_publickeys pk
              JOIN gossamer_providers prov ON pk.provider = prov.id
-             WHERE prov.name = ? AND NOT pk.revoked",
+             WHERE prov.name = ? AND NOT pk.revoked" . $suffix,
             0,
             $providerName
         );
@@ -360,5 +374,23 @@ class PDO implements DbInterface
             );
         }
         return (int) $publicKeyId;
+    }
+
+    /**
+     * Is the "limited" flag set to TRUE on this key?
+     *
+     * @param string $providerName
+     * @param string $publicKey
+     * @return bool
+     */
+    public function isKeyLimited($providerName, $publicKey)
+    {
+        return (bool) $this->db->cell(
+            "SELECT pk.limited FROM gossamer_provider_publickeys pk " .
+            "JOIN gossamer_providers prov ON pk.provider = prov.id " .
+            "WHERE prov.name = ? AND NOT pk.revoked AND pk.publickey = ?",
+            $providerName,
+            $publicKey
+        );
     }
 }

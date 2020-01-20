@@ -259,16 +259,22 @@ class DummyDB implements DbInterface
 
     /**
      * @param string $providerName
+     * @param ?bool $limited
      * @return array<array-key, string>
      * @throws \SodiumException
      */
-    public function getPublicKeysForProvider($providerName)
+    public function getPublicKeysForProvider($providerName, $limited = null)
     {
         $providerId = $this->getProviderId($providerName);
         $return = array();
         foreach ($this->state[self::TABLE_PUBLIC_KEYS] as $row) {
             if ($providerId !== $row['provider']) {
                 continue;
+            }
+            if (!is_null($limited)) {
+                if ($limited !== $row['limited']) {
+                    continue;
+                }
             }
             $return []= $row['publickey'];
         }
@@ -326,5 +332,15 @@ class DummyDB implements DbInterface
                 $this->cacheKey
             )
         );
+    }
+
+    /**
+     * @param string $providerName
+     * @param string $publicKey
+     * @return bool
+     */
+    public function isKeyLimited($providerName, $publicKey)
+    {
+        return false;
     }
 }

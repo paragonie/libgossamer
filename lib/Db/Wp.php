@@ -90,6 +90,15 @@ class Wp implements DbInterface
     public function appendKey($provider, $publicKey, $limited = false, array $meta = array(), $hash = '')
     {
         $providerId = $this->getProviderId($provider);
+        if ($limited) {
+            // Get non-limited keys
+            $existingKeys = $this->getPublicKeysForProvider($provider, false);
+            if (count($existingKeys) < 1) {
+                throw new GossamerException(
+                    'Attempting to append a limited key without a pre-existing non-limited key.'
+                );
+            }
+        }
 
         $inserts = array(
             'provider'  => $providerId,
@@ -114,7 +123,7 @@ class Wp implements DbInterface
      * @param array $meta
      * @param string $hash
      * @return bool
-     * @throws \ParagonIE\Gossamer\GossamerException
+     * @throws GossamerException
      */
     public function revokeKey($provider, $publicKey, array $meta = array(), $hash = '')
     {
@@ -179,7 +188,7 @@ class Wp implements DbInterface
      * @param array $meta
      * @param string $hash
      * @return bool
-     * @throws \ParagonIE\Gossamer\GossamerException
+     * @throws GossamerException
      */
     public function appendUpdate(
         $provider,
@@ -220,7 +229,7 @@ class Wp implements DbInterface
      * @param array $meta
      * @param string $hash
      * @return bool
-     * @throws \ParagonIE\Gossamer\GossamerException
+     * @throws GossamerException
      */
     public function revokeUpdate(
         $provider,
@@ -271,14 +280,19 @@ class Wp implements DbInterface
 
     /**
      * @param string $providerName
+     * @param ?bool $limited
      * @return array<array-key, string>
      */
-    public function getPublicKeysForProvider($providerName)
+    public function getPublicKeysForProvider($providerName, $limited = null)
     {
+        $suffix = '';
+        if (!is_null($limited)) {
+            $suffix = $limited ? ' AND pk.limited' : ' AND NOT pk.limited';
+        }
         $query = $this->db->prepare(
             "SELECT pk.publickey FROM gossamer_provider_publickeys pk " .
             "JOIN gossamer_providers prov ON pk.provider = prov.id " .
-            "WHERE prov.name = ? AND NOT pk.revoked",
+            "WHERE prov.name = ? AND NOT pk.revoked" . $suffix,
             $providerName
         );
         
@@ -296,7 +310,7 @@ class Wp implements DbInterface
      * @param string $packageName
      * @param int $providerId
      * @return int
-     * @throws \ParagonIE\Gossamer\GossamerException
+     * @throws GossamerException
      */
     public function getPackageId($packageName, $providerId)
     {
@@ -329,7 +343,7 @@ class Wp implements DbInterface
     /**
      * @param string $providerName
      * @return int
-     * @throws \ParagonIE\Gossamer\GossamerException
+     * @throws GossamerException
      */
     public function getProviderId($providerName)
     {
@@ -379,5 +393,24 @@ class Wp implements DbInterface
         }
 
         return (int) $publicKeyId[0];
+    }
+
+    /**
+     * Is the "limited" flag set to TRUE on this key?
+     *
+     * @param string $providerName
+     * @param string $publicKey
+     * @return bool
+     */
+    public function isKeyLimited($providerName, $publicKey)
+    {
+        $query = $this->db->prepare(
+            "SELECT pk.limited FROM gossamer_provider_publickeys pk " .
+            "JOIN gossamer_providers prov ON pk.provider = prov.id " .
+            "WHERE prov.name = ? AND NOT pk.revoked AND pk.publickey = ?",
+            $providerName,
+            $publicKey
+        );
+        return (bool) $this->db->get_col($query);
     }
 }
