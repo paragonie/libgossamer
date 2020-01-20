@@ -103,6 +103,8 @@ If it is absent, it is implicitly false. The first `AppendKey` for a provider
 The provider must have at least one non-limited, non-revoked key in order to
 create limited keys.
 
+Limited keys can only be used to issue an `AppendUpdate` action.
+
 When this action is performed, it should insert a new row in a database.
 
 ### RevokeKey
@@ -197,12 +199,29 @@ oversight into the protocol.
 
 Attestations **MUST** be one of the following:
 
-| Attestation  | Meaning                                                              |
-|--------------|----------------------------------------------------------------------|
-| `reproduced` | The attestor was able to reproduce this update from the source code. |
-| `spot-check` | The attestor provided a spot check for this update.                  |
-| `reviewed`   | The attestor performed a code review for this update.                |
-| `sec-audit`  | This update passed a security audit performed by the attestor.       |
+| Attestation   | Meaning                                                              |
+|---------------|----------------------------------------------------------------------|
+| `reproduced`  | The attestor was able to reproduce this update from the source code. |
+| `spot-check`  | The attestor provided a spot check for this update.                  |
+| `code-review` | The attestor performed a code review for this update.                |
+| `sec-audit`   | This update passed a security audit performed by the attestor.       |
+
+When implementing support for attestations in a protocol that builds atop
+Gossamer, you **MAY** treat the above as an enum.
+
+* Reproducing a build package from the source code (`reproduiced`) is important,
+  but can be performed without human attention.
+* A `spot-check` can be done in a hurry, and only certifies that nothing leaped
+  out to the reviewer as "obviously malicious or broken".
+* A code review (`code-review`) means that someone looked over the contents of
+  the release and evaluated their contents carefully. It doesn't necessarily
+  imply any sort of security guarantees; merely that this update was peer
+  reviewed.
+* A security audit (`sec-audit`) is the highest level of attestation that a
+  third party can provide. It implies that not only was the release reviewed
+  by an independent third party (like a `code-review`), but also that the third
+  party in question claims to have discovered no security vulnerabilities in
+  this particular version of the software.
 
 ## Invalid Messages in the Ledger
 

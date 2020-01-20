@@ -57,6 +57,7 @@ different subset of our library's built-in functionality.
    * `RevokeKey`
    * `AppendUpdate`
    * `RevokeUpdate`
+   * `AttestUpdate`
 2. The `Action` is serialized and signed with the user's secret key,
    forming a `SignedMessage` object.
 3. The `SignedMessage` is serialized and sent to the update server.

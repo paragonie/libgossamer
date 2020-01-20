@@ -22,3 +22,4 @@ straightforward flow to the components.
      * [RevokeKey](Protocol.md#revokekey)
      * [AppendUpdate](Protocol.md#appendupdate)
      * [RevokeUpdate](Protocol.md#revokeupdate)
+     * [AttestUpdate](Protocol.md#attestupdate)
