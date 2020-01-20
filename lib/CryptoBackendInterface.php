@@ -1,5 +1,5 @@
 <?php
-namespace ParagonIE\Gossamer\Release;
+namespace ParagonIE\Gossamer;
 
 /**
  * Interface CryptoBackendInterface

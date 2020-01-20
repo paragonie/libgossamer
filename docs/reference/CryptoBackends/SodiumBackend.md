@@ -1,6 +1,6 @@
 # SodiumBackend
 
-* **Fully Qualified Class Name**: `ParagonIE\Gossamer\Release\Backend\SodiumBackend`
+* **Fully Qualified Class Name**: `ParagonIE\Gossamer\CryptoBackends\SodiumBackend`
 
 ## Class Methods
 
