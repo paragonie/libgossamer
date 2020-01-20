@@ -2,6 +2,7 @@
 namespace ParagonIE\Gossamer\Release;
 
 use ParagonIE\Gossamer\GossamerException;
+use ParagonIE\Gossamer\Release\Backends\SodiumBackend;
 
 /**
  * Class Common
@@ -15,6 +16,9 @@ class Common
     /** @var string $alg */
     protected $alg;
 
+    /** @var CryptoBackendInterface $backend */
+    protected $backend;
+
     /** @var string $alg */
     protected $hashAlgorithm;
 
@@ -23,12 +27,19 @@ class Common
 
     /**
      * Verifier constructor.
+     *
      * @param int $alg
+     * @param CryptoBackendInterface|null $backend
+     *
      * @throws GossamerException
      * @psalm-suppress InternalMethod
      */
-    public function __construct($alg = self::SIGN_ALG_ED25519_SHA384)
+    public function __construct($alg = self::SIGN_ALG_ED25519_SHA384, CryptoBackendInterface $backend = null)
     {
+        if (empty($backend)) {
+            $backend = new SodiumBackend();
+        }
+        $this->backend = $backend;
         /** @var array<int, array{signature: string, file-hash: string}> $map */
         $map = self::signatureAlgorithmMap();
         if (!array_key_exists($alg, $map)) {

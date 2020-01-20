@@ -2,6 +2,7 @@
 namespace ParagonIE\Gossamer\Release;
 
 use ParagonIE\Gossamer\GossamerException;
+use ParagonIE\Gossamer\Release\Backends\SodiumBackend;
 use ParagonIE\Gossamer\Util;
 
 /**
@@ -20,9 +21,9 @@ class Signer extends Common
      */
     public function signFile($filePath, $secretKey)
     {
-        $signed = sodium_crypto_sign_detached(
+        $signed = $this->backend->sign(
             $this->preHashFile($filePath),
-            Util::rawBinary($secretKey, 64)
+            $secretKey
         );
         return sodium_bin2hex($this->alg . $signed);
     }

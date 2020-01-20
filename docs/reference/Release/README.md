@@ -5,6 +5,9 @@ version releases for packages.
 
 ## Classes
 
+* [Backends](Backends)
+    * [SodiumBackend](Backends/SodiumBackend.md)
 * [Common](Common.md)
+* [CryptoBakendInterface](CryptoBackendInterface.md)
 * [Signer](Signer.md)
 * [Verifier](Verifier.md)
