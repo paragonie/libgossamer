@@ -4,6 +4,7 @@ namespace ParagonIE\Gossamer\Release;
 use ParagonIE\Gossamer\GossamerException;
 use ParagonIE\Gossamer\Util;
 use ParagonIE\Gossamer\VerifierInterface;
+use SodiumException;
 
 /**
  * Class Verifier
@@ -12,12 +13,14 @@ use ParagonIE\Gossamer\VerifierInterface;
 class Verifier extends Common implements VerifierInterface
 {
     /**
+     * Verify the signature on an update file.
+     *
      * @param string $filePath
      * @param string $signature
      * @param array<array-key, string> $publicKeys
      * @return bool
      * @throws GossamerException
-     * @throws \SodiumException
+     * @throws SodiumException
      * @psalm-suppress InternalMethod
      */
     public function verify($filePath = '', $signature = '', array $publicKeys = array())

@@ -5,6 +5,7 @@ use ParagonIE\Gossamer\HttpInterface;
 use ParagonIE\Gossamer\Protocol\SignedMessage;
 use ParagonIE\Gossamer\ScribeInterface;
 use ParagonIE\Gossamer\Util;
+use SodiumException;
 
 /**
  * Class Chronicle
@@ -54,9 +55,12 @@ class Chronicle implements ScribeInterface
     }
 
     /**
+     * Sign the message body.
+     * Returns the string to place in the HTTP message header.
+     *
      * @param string $serialized
      * @return string
-     * @throws \SodiumException
+     * @throws SodiumException
      */
     public function signMessageBody($serialized)
     {
@@ -70,11 +74,13 @@ class Chronicle implements ScribeInterface
     }
 
     /**
+     * Did the Chronicle return a valid response?
+     *
      * @param int $status
      * @param string $body
      * @param array<array-key, array<array-key, string>> $headers
      * @return bool
-     * @throws \SodiumException
+     * @throws SodiumException
      * @psalm-suppress DocblockTypeContradiction
      */
     public function responseValid($status, $body, array $headers = array())
@@ -105,9 +111,11 @@ class Chronicle implements ScribeInterface
     }
 
     /**
+     * Publish a new record to the Chronicle.
+     *
      * @param SignedMessage $message
      * @return bool
-     * @throws \SodiumException
+     * @throws SodiumException
      */
     public function publish(SignedMessage $message)
     {

@@ -32,7 +32,6 @@ class Response extends Packet
     /**
      * @return array<array-key, SignedMessage>
      * @throws GossamerException
-     * @throws \SodiumException
      */
     public function extractAllFromChronicleResponse()
     {
@@ -43,23 +42,8 @@ class Response extends Packet
         foreach ($results as $index => $res) {
             /** @var array<string, string> $contents */
             $contents = json_decode($res['contents'], true);
-            if (!isset($contents['message'])) {
-                throw new GossamerException('Key "message" not found in "contents" at index ' . $index . '.');
-            }
-            if (!isset($contents['signature'])) {
-                throw new GossamerException('Key "signature" not found in "contents" at index ' . $index . '.');
-            }
-            if (!isset($contents['provider'])) {
-                throw new GossamerException('Key "provider" not found in "contents" at index ' . $index . '.');
-            }
-            $signedMessage = SignedMessage::init(
-                (string) $contents['message'],
-                (string) $contents['signature'],
-                (string) $contents['provider'],
-                (string) (isset($contents['publickey']) ? $contents['publickey'] : '')
-            );
-            $signedMessage->setMeta('summary-hash', $res['summary']);
-            $messages []= $signedMessage;
+            $this->validateChronicleContents($contents, $index);
+            $messages []= $this->chronicleResponseToSignedMessage($res, $contents);
         }
         return $messages;
     }
@@ -69,7 +53,6 @@ class Response extends Packet
      * @return SignedMessage
      *
      * @throws GossamerException
-     * @throws \SodiumException
      */
     public function extractFromChronicleResponse($index = 0)
     {
@@ -90,8 +73,39 @@ class Response extends Packet
         if (empty($res['publickey'])) {
             throw new GossamerException('Key "publickey" not found at index ' . $index . '.');
         }
+
         /** @var array<string, string> $contents */
         $contents = json_decode($res['contents'], true);
+        $this->validateChronicleContents($contents, $index);
+        return $this->chronicleResponseToSignedMessage($res, $contents);
+    }
+
+    /**
+     * @param array<string, string> $res
+     * @param array<string, string> $contents
+     * @return SignedMessage
+     */
+    protected function chronicleResponseToSignedMessage(array $res, array $contents)
+    {
+        $signedMessage = SignedMessage::init(
+            (string) $contents['message'],
+            (string) $contents['signature'],
+            (string) $contents['provider'],
+            (string) (isset($contents['publickey']) ? $contents['publickey'] : '')
+        );
+        $signedMessage->setMeta('summary-hash', $res['summary']);
+        return $signedMessage;
+
+    }
+
+    /**
+     * @param array $contents
+     * @param int $index
+     * @return void
+     * @throws GossamerException
+     */
+    protected function validateChronicleContents(array $contents, $index = 0)
+    {
         if (!isset($contents['message'])) {
             throw new GossamerException('Key "message" not found in "contents" at index ' . $index . '.');
         }
@@ -101,13 +115,5 @@ class Response extends Packet
         if (!isset($contents['provider'])) {
             throw new GossamerException('Key "provider" not found in "contents" at index ' . $index . '.');
         }
-        $signedMessage = SignedMessage::init(
-            (string) $contents['message'],
-            (string) $contents['signature'],
-            (string) $contents['provider'],
-            (string) (isset($contents['publickey']) ? $contents['publickey'] : '')
-        );
-        $signedMessage->setMeta('summary-hash', $res['summary']);
-        return $signedMessage;
     }
 }

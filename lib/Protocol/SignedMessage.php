@@ -6,6 +6,7 @@ use ParagonIE\Gossamer\GossamerException;
 use ParagonIE\Gossamer\CryptoBackends\SodiumBackend;
 use ParagonIE\Gossamer\CryptoBackendInterface;
 use ParagonIE\Gossamer\Util;
+use SodiumException;
 
 /**
  * Class SignedMessage
@@ -100,7 +101,7 @@ class SignedMessage
      * @param string $secretKey
      * @param CryptoBackendInterface $backend = null
      * @return SignedMessage
-     * @throws \SodiumException
+     * @throws SodiumException
      */
     public static function sign($contents, $provider, $secretKey, CryptoBackendInterface $backend = null)
     {
@@ -148,7 +149,7 @@ class SignedMessage
 
     /**
      * @return string
-     * @throws \SodiumException
+     * @throws SodiumException
      */
     public function toString()
     {
@@ -267,7 +268,7 @@ class SignedMessage
      * @param string $superProvider
      * @return Message
      * @throws GossamerException
-     * @throws \SodiumException
+     * @throws SodiumException
      */
     public function verifyAndExtract(DbInterface $db, $superProvider)
     {

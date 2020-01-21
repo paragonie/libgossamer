@@ -2,8 +2,6 @@
 namespace ParagonIE\Gossamer\Release;
 
 use ParagonIE\Gossamer\GossamerException;
-use ParagonIE\Gossamer\Release\Backends\SodiumBackend;
-use ParagonIE\Gossamer\Util;
 
 /**
  * Class Signer
@@ -12,6 +10,8 @@ use ParagonIE\Gossamer\Util;
 class Signer extends Common
 {
     /**
+     * Sign an update file with your secret key.
+     *
      * @param string $filePath
      * @param string $secretKey
      * @return string

@@ -2,6 +2,7 @@
 namespace ParagonIE\Gossamer\Protocol;
 
 use ParagonIE\Gossamer\Util;
+use SodiumException;
 
 /**
  * Class Message
@@ -57,7 +58,7 @@ class Message
      *
      * @param string $publicKey
      * @return bool
-     * @throws \SodiumException
+     * @throws SodiumException
      */
     public function signatureValidForPublicKey($publicKey)
     {

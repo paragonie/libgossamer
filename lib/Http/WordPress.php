@@ -7,6 +7,7 @@ use ParagonIE\Gossamer\HttpException;
 use ParagonIE\Gossamer\HttpInterface;
 use WP_Http;
 use WP_Error;
+use SodiumException;
 
 /**
  * Class WordPress
@@ -25,7 +26,7 @@ class WordPress implements HttpInterface
      *
      * @param RemoteFetch|null $remoteFetch
      * @throws CertaintyException
-     * @throws \SodiumException
+     * @throws SodiumException
      */
     public function __construct($remoteFetch = null)
     {
@@ -39,6 +40,11 @@ class WordPress implements HttpInterface
     }
 
     /**
+     * Send an HTTP GET request. Returns the response as an array:
+     * - body: string,
+     * - headers: string[][],
+     * - status: int
+     *
      * @param string $url
      * @return array{body: string, headers: array<array-key, array<array-key, string>>, status: int}
      * @throws HttpException
@@ -54,6 +60,8 @@ class WordPress implements HttpInterface
     }
 
     /**
+     * Converts the WordPress response array into the format we expect in our library.
+     *
      * @param array{headers: array<array-key,string|array<array-key, string>>, body:string, response: array, cookies: array, filename: string} $response
      * @return array{body: string, headers: array<array-key, array<array-key, string>>, status: int}
      */
@@ -83,6 +91,11 @@ class WordPress implements HttpInterface
     }
 
     /**
+     * Send an HTTP POST request. Returns the response as an array:
+     * - body: string,
+     * - headers: string[][],
+     * - status: int
+     *
      * @param string $url
      * @param string $body
      * @param array $headers

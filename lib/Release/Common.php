@@ -4,6 +4,7 @@ namespace ParagonIE\Gossamer\Release;
 use ParagonIE\Gossamer\CryptoBackendInterface;
 use ParagonIE\Gossamer\CryptoBackends\SodiumBackend;
 use ParagonIE\Gossamer\GossamerException;
+use SodiumException;
 
 /**
  * Class Common
@@ -57,7 +58,7 @@ class Common
      * @param string $filePath
      * @return string
      * @throws GossamerException
-     * @throws \SodiumException
+     * @throws SodiumException
      */
     public function preHashFile($filePath)
     {
@@ -88,7 +89,7 @@ class Common
     }
 
     /**
-     * @return array
+     * @return array<int, array<string, string>>
      */
     public static function signatureAlgorithmMap()
     {

@@ -1,11 +1,13 @@
 <?php
 namespace ParagonIE\Gossamer\Http;
+
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use ParagonIE\Certainty\Exception\CertaintyException;
 use ParagonIE\Gossamer\HttpInterface;
 use ParagonIE\Certainty\RemoteFetch;
 use Psr\Http\Message\ResponseInterface;
+use SodiumException;
 
 /**
  * Class Guzzle
@@ -23,7 +25,7 @@ class Guzzle implements HttpInterface
      *
      * @param RemoteFetch|null $remoteFetch
      * @throws CertaintyException
-     * @throws \SodiumException
+     * @throws SodiumException
      */
     public function __construct($remoteFetch = null)
     {
@@ -40,6 +42,11 @@ class Guzzle implements HttpInterface
     }
 
     /**
+     * Send an HTTP GET request. Returns the response as an array:
+     * - body: string,
+     * - headers: string[][],
+     * - status: int
+     *
      * @param string $url
      * @return array{body: string, headers: array<array-key, array<array-key, string>>, status: int}
      */
@@ -55,6 +62,9 @@ class Guzzle implements HttpInterface
     }
 
     /**
+     * Convert a PSR-7 Response object into an array conforming to what our
+     * library expects.
+     *
      * @param ResponseInterface $response
      * @return array{body: string, headers: array<array-key, array<array-key, string>>, status: int}
      */
@@ -68,6 +78,11 @@ class Guzzle implements HttpInterface
     }
 
     /**
+     * Send an HTTP POST request. Returns the response as an array:
+     * - body: string,
+     * - headers: string[][],
+     * - status: int
+     *
      * @param string $url
      * @param string $body
      * @param array $headers

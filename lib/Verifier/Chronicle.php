@@ -6,6 +6,7 @@ use ParagonIE\Gossamer\HttpInterface;
 use ParagonIE\Gossamer\LedgerInterface;
 use ParagonIE\Gossamer\Util;
 use ParagonIE\Gossamer\VerifierInterface;
+use SodiumException;
 
 /**
  * Class Chronicle
@@ -50,7 +51,7 @@ class Chronicle implements LedgerInterface, VerifierInterface
      * @param string $hash
      * @return bool
      * @throws GossamerException
-     * @throws \SodiumException
+     * @throws SodiumException
      */
     public function verify($hash = '')
     {
@@ -58,6 +59,8 @@ class Chronicle implements LedgerInterface, VerifierInterface
     }
 
     /**
+     * Adds a Chronicle instance to this verifier.
+     *
      * @param string $url
      * @param string $publicKey
      * @param string $trust
@@ -75,6 +78,8 @@ class Chronicle implements LedgerInterface, VerifierInterface
     }
 
     /**
+     * Fetch a random Chronicle instance.
+     *
      * @return array<string, string>
      * @throws GossamerException
      */
@@ -85,6 +90,8 @@ class Chronicle implements LedgerInterface, VerifierInterface
     }
 
     /**
+     * Fetch a random subset of the configured Chronicles.
+     *
      * @param int $num
      * @return array<int, array<string, string>>
      * @throws GossamerException
@@ -119,7 +126,7 @@ class Chronicle implements LedgerInterface, VerifierInterface
      * @param string $hash
      * @return bool
      * @throws GossamerException
-     * @throws \SodiumException
+     * @throws SodiumException
      */
     public function quorumAgrees($hash)
     {
@@ -146,7 +153,7 @@ class Chronicle implements LedgerInterface, VerifierInterface
      * @param string $hash
      * @param array<string, string> $chronicle
      * @return bool
-     * @throws \SodiumException
+     * @throws SodiumException
      */
     public function chronicleSeesHash($hash, array $chronicle)
     {
@@ -165,12 +172,15 @@ class Chronicle implements LedgerInterface, VerifierInterface
     }
 
     /**
+     * Process the response from a Chronicle instance.
+     *
      * @param array<string, string> $chronicle
      * @param int $status
      * @param array<array-key, array<array-key, string>> $headers
      * @param string $body
      * @return bool
-     * @throws \SodiumException
+     *
+     * @throws SodiumException
      * @psalm-suppress DocblockTypeContradiction
      */
     public function processChronicleResponse(array $chronicle, $status, array $headers, $body)
@@ -208,6 +218,8 @@ class Chronicle implements LedgerInterface, VerifierInterface
     }
 
     /**
+     * Set the minimum number of instances required to establish quorum.
+     *
      * @param int $numInstances
      * @return self
      */
@@ -218,6 +230,8 @@ class Chronicle implements LedgerInterface, VerifierInterface
     }
 
     /**
+     * Clear all configured Chronicle instances.
+     *
      * @return self
      */
     public function clearInstances()
@@ -227,6 +241,10 @@ class Chronicle implements LedgerInterface, VerifierInterface
     }
 
     /**
+     * Populate the verifier with the given Chronicle configuration.
+     *
+     * Appends, does not overwrite.
+     *
      * @param array<array-key, array{url: string, public-key: string, trust: string}> $instances
      * @return self
      */

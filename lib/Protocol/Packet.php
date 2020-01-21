@@ -3,6 +3,7 @@ namespace ParagonIE\Gossamer\Protocol;
 
 use ParagonIE\Gossamer\GossamerException;
 use ParagonIE\Gossamer\Util;
+use SodiumException;
 
 /**
  * Class Packet
@@ -34,7 +35,7 @@ class Packet
      * @param string $secretKey
      * @return self
      * @throws GossamerException
-     * @throws \SodiumException
+     * @throws SodiumException
      */
     public static function createSigned(array $contents, $secretKey)
     {

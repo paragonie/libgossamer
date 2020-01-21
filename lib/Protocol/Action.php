@@ -1,8 +1,10 @@
 <?php
 namespace ParagonIE\Gossamer\Protocol;
 
+use ParagonIE\Gossamer\CryptoBackendInterface;
 use ParagonIE\Gossamer\GossamerException;
 use ParagonIE\Gossamer\DbInterface;
+use SodiumException;
 
 /**
  * Class Action
@@ -167,15 +169,17 @@ class Action
 
     /**
      * @param string $signingKey
+     * @param CryptoBackendInterface|null $backend
      * @return SignedMessage
-     * @throws \SodiumException
+     * @throws SodiumException
      */
-    public function toSignedMessage($signingKey)
+    public function toSignedMessage($signingKey, CryptoBackendInterface $backend = null)
     {
         return SignedMessage::sign(
             $this->toJsonString(),
             $this->provider,
-            $signingKey
+            $signingKey,
+            $backend
         );
     }
 

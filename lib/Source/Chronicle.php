@@ -6,6 +6,7 @@ use ParagonIE\Gossamer\HttpInterface;
 use ParagonIE\Gossamer\SourceInterface;
 use ParagonIE\Gossamer\Response;
 use ParagonIE\Gossamer\Verifier\Chronicle as ChronicleVerifier;
+use SodiumException;
 
 /**
  * Class Chronicle
@@ -50,7 +51,7 @@ class Chronicle implements SourceInterface
      * @return Response
      *
      * @throws GossamerException
-     * @throws \SodiumException
+     * @throws SodiumException
      */
     public function getRecordsSince($hash = '')
     {

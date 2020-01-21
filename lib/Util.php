@@ -69,7 +69,7 @@ class Util
             if (preg_match('#^[0-9A-Za-z+/]+=*$#', $input)) {
                 return sodium_base642bin($input, SODIUM_BASE64_VARIANT_ORIGINAL);
             }
-            if (preg_match('#^[0-9A-Za-z-_]+=*$#', $input)) {
+            if (preg_match('#^[0-9A-Za-z\-_]+=*$#', $input)) {
                 return sodium_base642bin($input, SODIUM_BASE64_VARIANT_URLSAFE);
             }
             throw new RangeException(

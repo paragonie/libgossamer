@@ -26,6 +26,8 @@ class Wp implements DbInterface
     }
 
     /**
+     * Get the last successful checkpoint hash from the metadata table.
+     *
      * @return string
      */
     public function getCheckpointHash()
@@ -41,6 +43,8 @@ class Wp implements DbInterface
     }
 
     /**
+     * Update the metadata table with the last successful checkpoint hash.
+     *
      * @param string $hash
      * @return bool
      */
@@ -79,6 +83,8 @@ class Wp implements DbInterface
     }
 
     /**
+     * Perform an AppendKey action against this database.
+     *
      * @param string $provider
      * @param string $publicKey
      * @param bool $limited
@@ -118,6 +124,8 @@ class Wp implements DbInterface
     }
 
     /**
+     * Perform a RevokeKey action against this database.
+     *
      * @param string $provider
      * @param string $publicKey
      * @param array $meta
@@ -146,6 +154,8 @@ class Wp implements DbInterface
     }
 
     /**
+     * Add a callback to handle AttestUpdate actions.
+     *
      * @param callable $callback
      * @return self
      */
@@ -156,6 +166,10 @@ class Wp implements DbInterface
     }
 
     /**
+     * Perform an AttestUpdate action against this database.
+     *
+     * Does nothing unless setAttestCallback() has been called.
+     *
      * @param string $provider
      * @param string $package
      * @param string $release
@@ -182,6 +196,8 @@ class Wp implements DbInterface
     }
 
     /**
+     * Perform an AppendUpdate action against this database.
+     *
      * @param string $provider
      * @param string $package
      * @param string $publicKey
@@ -224,6 +240,8 @@ class Wp implements DbInterface
     }
 
     /**
+     * Perform a RevokeUpdate action against this database.
+     *
      * @param string $provider
      * @param string $package
      * @param string $publicKey
@@ -265,6 +283,8 @@ class Wp implements DbInterface
     }
 
     /**
+     * Does this provider exist in this database?
+     *
      * @param string $providerName
      * @return bool
      */
@@ -281,6 +301,12 @@ class Wp implements DbInterface
     }
 
     /**
+     * Get a list of non-revoked public keys for this provider.
+     *
+     * If you pass $limited as TRUE, this method only returns limited keys.
+     * If you pass $limited as FALSE, this method only returns non-limited keys.
+     * If you pass $limited as NULL (default), it returns both kinds.
+     *
      * @param string $providerName
      * @param ?bool $limited
      * @return array<array-key, string>
@@ -309,6 +335,10 @@ class Wp implements DbInterface
     }
 
     /**
+     * Get the database row ID for a given package.
+     *
+     * If the package does not exist, it will be created.
+     *
      * @param string $packageName
      * @param int $providerId
      * @return int
@@ -343,6 +373,10 @@ class Wp implements DbInterface
     }
 
     /**
+     * Get the database row ID for a given provider.
+     *
+     * If the provider does not exist, it will be created.
+     *
      * @param string $providerName
      * @return int
      * @throws GossamerException
@@ -375,10 +409,14 @@ class Wp implements DbInterface
     }
 
     /**
+     * Get the database row ID for a given public key.
+     *
+     * If the public key does not exist, it will be created.
+     *
      * @param string $publicKey
      * @param int $providerId
      * @return int
-     * @throws \ParagonIE\Gossamer\GossamerException
+     * @throws GossamerException
      */
     public function getPublicKeyId($publicKey, $providerId)
     {
