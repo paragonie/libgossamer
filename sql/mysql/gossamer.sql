@@ -48,7 +48,7 @@ CREATE TABLE gossamer_package_releases (
     PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX gossamer_release_version_index
-    ON gossamer_package_releases (package, version);
+    ON gossamer_package_releases (package, publickey, version);
 
 -- Gossamer metadata table
 CREATE TABLE gossamer_meta (
