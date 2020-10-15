@@ -28,6 +28,7 @@ class Util
      * @param string &$var
      * @param-out null $var
      * @return void
+     * @psalm-suppress ReferenceConstraintViolation
      * @psalm-suppress PossiblyNullOperand
      * @psalm-suppress InvalidOperand
      */
