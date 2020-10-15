@@ -21,6 +21,7 @@ class Verifier extends Common implements VerifierInterface
      * @return bool
      * @throws GossamerException
      * @throws SodiumException
+     * @psalm-suppress ParamNameMismatch
      * @psalm-suppress InternalMethod
      */
     public function verify($filePath = '', $signature = '', array $publicKeys = array())

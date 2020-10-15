@@ -28,7 +28,7 @@
     "paragonie/sodium_compat": "^1.12"
   },
   "require-dev": {
-    "guzzlehttp/guzzle": "^6",
+    "guzzlehttp/guzzle": "^6|^7",
     "phpunit/phpunit": "^3|^4|^5|^6|^7",
     "vimeo/psalm": "^1|^3"
   },

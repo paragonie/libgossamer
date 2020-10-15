@@ -26,7 +26,10 @@ class Util
      * Wipe a variable from memory.
      *
      * @param string &$var
+     * @param-out null $var
      * @return void
+     * @psalm-suppress PossiblyNullOperand
+     * @psalm-suppress InvalidOperand
      */
     public static function memzero(&$var)
     {
