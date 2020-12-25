@@ -7,9 +7,9 @@ use ParagonIE\Gossamer\GossamerException;
 
 /**
  * Class Wp
- * 
+ *
  * An implementation of `\ParagonIE\Gossamer\DbInterface` that wraps `\wpdb`
- * 
+ *
  * @package ParagonIE\Gossamer\Db
  */
 class Wp implements DbInterface
@@ -88,17 +88,18 @@ class Wp implements DbInterface
      * @param string $provider
      * @param string $publicKey
      * @param bool $limited
+     * @param string $purpose
      * @param array $meta
      * @param string $hash
      * @return bool
      * @throws GossamerException
      */
-    public function appendKey($provider, $publicKey, $limited = false, array $meta = array(), $hash = '')
+    public function appendKey($provider, $publicKey, $limited = false, $purpose = '', array $meta = array(), $hash = '')
     {
         $providerId = $this->getProviderId($provider);
         if ($limited) {
             // Get non-limited keys
-            $existingKeys = $this->getPublicKeysForProvider($provider, false);
+            $existingKeys = $this->getPublicKeysForProvider($provider, false, '');
             if (count($existingKeys) < 1) {
                 throw new GossamerException(
                     'Attempting to append a limited key without a pre-existing non-limited key.'
@@ -110,9 +111,10 @@ class Wp implements DbInterface
             'provider'  => $providerId,
             'publickey' => $publicKey,
             'limited' => $limited,
+            'purpose' => $purpose,
             'metadata'  => json_encode($meta)
         );
-        
+
         if (!empty($hash)) {
             $inserts['ledgerhash'] = $hash;
         }
@@ -138,7 +140,7 @@ class Wp implements DbInterface
         $providerId = $this->getProviderId($provider);
 
         $updates = array('revoked' => true);
-        
+
         if (!empty($hash)) {
             $updates['revokehash'] = $hash;
         }
@@ -219,6 +221,7 @@ class Wp implements DbInterface
     ) {
         $providerId = $this->getProviderId($provider);
         $packageId = $this->getPackageId($package, $providerId);
+        // Security: getPublicKeyId() must throw if the public key belongs to a different provider
         $publicKeyId = $this->getPublicKeyId($publicKey, $providerId);
 
         $inserts = array(
@@ -228,7 +231,7 @@ class Wp implements DbInterface
             'signature' => $signature,
             'metadata' => json_encode($meta)
         );
-        
+
         if (!empty($hash)) {
             $inserts['ledgerhash'] = $hash;
         }
@@ -263,7 +266,7 @@ class Wp implements DbInterface
         $packageId = $this->getPackageId($package, $providerId);
 
         $updates = array('revoked' => true);
-        
+
         if (!empty($hash)) {
             $updates['revokehash'] = $hash;
         }
@@ -307,30 +310,45 @@ class Wp implements DbInterface
      * If you pass $limited as FALSE, this method only returns non-limited keys.
      * If you pass $limited as NULL (default), it returns both kinds.
      *
+     * If you pass $purpose as an empty string, this method disregards purpose.
+     * If you pass $purpose as a non-empty string, this method only returns keys that match that purpose.
+     * If you pass $purpose as NULL (default), it only returns keys without a purpose.
+     *
      * @param string $providerName
      * @param ?bool $limited
+     * @param ?string $purpose
      * @return array<array-key, string>
      */
-    public function getPublicKeysForProvider($providerName, $limited = null)
+    public function getPublicKeysForProvider($providerName, $limited = null, $purpose = null)
     {
         $suffix = '';
         if (!is_null($limited)) {
             $suffix = $limited ? ' AND pk.limited' : ' AND NOT pk.limited';
         }
-        $query = $this->db->prepare(
-            "SELECT pk.publickey FROM gossamer_provider_publickeys pk " .
+
+        $usePurpose = false;
+        if (is_null($purpose)) {
+            $suffix .= ' AND pk.purpose IS NULL';
+        } elseif ($purpose !== '') {
+            $suffix .= ' AND pk.purpose = ?';
+            $usePurpose = true;
+        }
+        $queryString = "SELECT pk.publickey FROM gossamer_provider_publickeys pk " .
             "JOIN gossamer_providers prov ON pk.provider = prov.id " .
-            "WHERE prov.name = ? AND NOT pk.revoked" . $suffix,
-            $providerName
-        );
-        
+            "WHERE prov.name = ? AND NOT pk.revoked" . $suffix;
+
+        if ($usePurpose) {
+            $query = $this->db->prepare($queryString, $providerName, $purpose);
+        } else {
+            $query = $this->db->prepare($queryString, $providerName);
+        }
+
         /** @var array<array-key, string> $pubKeys */
         $pubKeys = $this->db->get_col($query);
-        
+
         if (empty($pubKeys)) {
             return array();
         }
-        
         return $pubKeys;
     }
 

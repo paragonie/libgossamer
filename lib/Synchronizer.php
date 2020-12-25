@@ -24,7 +24,7 @@ class Synchronizer
     /** @var string $superProvider */
     protected $superProvider = '';
 
-    /** @var VerifierInterface $verifier */
+    /** @var LedgerVerifierInterface $verifier */
     protected $verifier;
 
     /**
@@ -32,14 +32,14 @@ class Synchronizer
      *
      * @param DbInterface $db
      * @param HttpInterface $http
-     * @param VerifierInterface $verifier
+     * @param LedgerVerifierInterface $verifier
      * @param array<array-key, array{url: string, public-key: string, trust: string}> $pool
      * @param string $superProvider
      */
     public function __construct(
         DbInterface $db,
         HttpInterface $http,
-        VerifierInterface $verifier,
+        LedgerVerifierInterface $verifier,
         array $pool = array(),
         $superProvider = ''
     ) {
@@ -115,14 +115,11 @@ class Synchronizer
 
     /**
      * @param array{url: string, public-key: string, trust: string}[] $peers
-     * @return VerifierInterface & LedgerInterface
+     * @return LedgerVerifierInterface
      */
     public function getVerifier(array $peers)
     {
         $verifier = clone $this->verifier;
-        if (!$verifier instanceof LedgerInterface) {
-            throw new \TypeError('Verifier must also be an instance of LedgerInterface');
-        }
         $verifier->clearInstances();
         $verifier->populateInstances($peers);
         return $verifier;
@@ -158,17 +155,16 @@ class Synchronizer
 
     /**
      * @param array<array-key, SignedMessage> $signedMessages
-     * @param VerifierInterface $verifier
+     * @param LedgerVerifierInterface $verifier
      * @return bool
      * @throws GossamerException
      * @throws \SodiumException
      */
-    public function transcribe(array $signedMessages, VerifierInterface $verifier)
+    public function transcribe(array $signedMessages, LedgerVerifierInterface $verifier)
     {
         /** @var SignedMessage $signedMessage */
         foreach ($signedMessages as $signedMessage) {
-            $summaryhash = $signedMessage->getMeta('summaryhash');
-            if ($verifier->verify($summaryhash)) {
+            if ($verifier->signedMessageFound($signedMessage)) {
                 $message = $signedMessage->verifyAndExtract($this->db, $this->superProvider);
                 $action = Action::fromMessage($message);
                 $action->perform($this->db);

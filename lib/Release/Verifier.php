@@ -29,7 +29,7 @@ class Verifier extends Common implements VerifierInterface
         $prehash = $this->preHashFile($filePath);
         $rawSig = Util::rawBinary($signature, 68);
         $header = \ParagonIE_Sodium_Core_Util::substr($rawSig, 0, 4);
-        if (!hash_equals($this->alg, $header)) {
+        if (!\hash_equals($this->alg, $header)) {
             throw new GossamerException('Invalid signature header');
         }
         $sig = \ParagonIE_Sodium_Core_Util::substr($rawSig, 4);

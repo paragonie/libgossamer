@@ -43,6 +43,9 @@ class Action
     /** @var string $publicKey */
     private $publicKey = '';
 
+    /** @var string $purpose */
+    private $purpose = '';
+
     /** @var string $release */
     private $release = '';
 
@@ -84,6 +87,9 @@ class Action
                 $action->publicKey = (string) $json['public-key'];
                 if (!empty($json['limited'])) {
                     $action->limited = true;
+                }
+                if (!empty($json['purpose'])) {
+                    $action->purpose = (string) $json['purpose'];
                 }
                 break;
             case self::VERB_ATTEST_UPDATE:
@@ -157,6 +163,9 @@ class Action
         }
         if (!empty($this->publicKey)) {
             $array['public-key'] = $this->publicKey;
+        }
+        if (!empty($this->purpose)) {
+            $array['purpose'] = $this->purpose;
         }
         if (!empty($this->release)) {
             $array['release'] = $this->release;
@@ -242,6 +251,14 @@ class Action
     /**
      * @return string
      */
+    public function getPurpose()
+    {
+        return $this->purpose;
+    }
+
+    /**
+     * @return string
+     */
     public function getRelease()
     {
         return $this->release;
@@ -270,6 +287,8 @@ class Action
      * The action should only be performed if the action has been determined
      * to be legitimate.
      *
+     * Note: Access controls are enforced at the Synchronizer level, not here.
+     *
      * @param DbInterface $db
      * @return bool
      */
@@ -281,6 +300,7 @@ class Action
                     $this->provider,
                     $this->publicKey,
                     $this->limited,
+                    $this->purpose,
                     $this->meta,
                     $this->hash
                 );

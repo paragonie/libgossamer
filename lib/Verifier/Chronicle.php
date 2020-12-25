@@ -4,6 +4,8 @@ namespace ParagonIE\Gossamer\Verifier;
 use ParagonIE\Gossamer\GossamerException;
 use ParagonIE\Gossamer\HttpInterface;
 use ParagonIE\Gossamer\LedgerInterface;
+use ParagonIE\Gossamer\LedgerVerifierInterface;
+use ParagonIE\Gossamer\Protocol\SignedMessage;
 use ParagonIE\Gossamer\Util;
 use ParagonIE\Gossamer\VerifierInterface;
 use SodiumException;
@@ -12,7 +14,7 @@ use SodiumException;
  * Class Chronicle
  * @package ParagonIE\Gossamer\Verifier
  */
-class Chronicle implements LedgerInterface, VerifierInterface
+class Chronicle implements LedgerInterface, LedgerVerifierInterface
 {
     // Verify Ed25519 signatures with the given public key
     const TRUST_BASIC = 'basic';
@@ -257,5 +259,18 @@ class Chronicle implements LedgerInterface, VerifierInterface
             $this->addChronicle($inst['url'], $inst['public-key'], $inst['trust']);
         }
         return $this;
+    }
+
+    /**
+     * Extract the summary hash from the signed message, then verify that summaryhash.
+     *
+     * @param SignedMessage $signedMessage
+     * @return bool
+     * @throws GossamerException
+     * @throws SodiumException
+     */
+    public function signedMessageFound(SignedMessage $signedMessage)
+    {
+        return $this->verify($signedMessage->getMeta('summaryhash'));
     }
 }

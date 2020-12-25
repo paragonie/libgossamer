@@ -83,17 +83,18 @@ class PDO implements DbInterface
      * @param string $provider
      * @param string $publicKey
      * @param bool $limited
+     * @param string $purpose
      * @param array $meta
      * @param string $hash
      * @return bool
      * @throws GossamerException
      */
-    public function appendKey($provider, $publicKey, $limited = false, array $meta = array(), $hash = '')
+    public function appendKey($provider, $publicKey, $limited = false, $purpose = '', array $meta = array(), $hash = '')
     {
         $providerId = $this->getProviderId($provider);
         if ($limited) {
             // Get non-limited keys
-            $existingKeys = $this->getPublicKeysForProvider($provider, false);
+            $existingKeys = $this->getPublicKeysForProvider($provider, false, '');
             if (count($existingKeys) < 1) {
                 throw new GossamerException(
                     'Attempting to append a limited key without a pre-existing non-limited key.'
@@ -105,6 +106,7 @@ class PDO implements DbInterface
             'provider' => $providerId,
             'publickey' => $publicKey,
             'limited' => $limited,
+            'purpose' => $purpose,
             'metadata' => json_encode($meta)
         ];
         if (!empty($hash)) {
@@ -302,24 +304,40 @@ class PDO implements DbInterface
      * If you pass $limited as FALSE, this method only returns non-limited keys.
      * If you pass $limited as NULL (default), it returns both kinds.
      *
+     * If you pass $purpose as an empty string, this method disregards purpose.
+     * If you pass $purpose as a non-empty string, this method only returns keys that match that purpose.
+     * If you pass $purpose as NULL (default), it only returns keys without a purpose.
+     *
      * @param string $providerName
      * @param ?bool $limited
+     * @param ?string $purpose
      * @return array<array-key, string>
      */
-    public function getPublicKeysForProvider($providerName, $limited = null)
+    public function getPublicKeysForProvider($providerName, $limited = null, $purpose = null)
     {
         $suffix = '';
         if (!is_null($limited)) {
             $suffix = $limited ? ' AND pk.limited' : ' AND NOT pk.limited';
         }
-        /** @var array<array-key, string> $pubKeys */
-        $pubKeys = $this->db->col(
-            "SELECT pk.publickey FROM gossamer_provider_publickeys pk
-             JOIN gossamer_providers prov ON pk.provider = prov.id
-             WHERE prov.name = ? AND NOT pk.revoked" . $suffix,
-            0,
-            $providerName
-        );
+        $usePurpose = false;
+        if (is_null($purpose)) {
+            $suffix .= ' AND pk.purpose IS NULL';
+        } elseif ($purpose !== '') {
+            $suffix .= ' AND pk.purpose = ?';
+            $usePurpose = true;
+        }
+        $queryString = "SELECT pk.publickey FROM gossamer_provider_publickeys pk
+            JOIN gossamer_providers prov ON pk.provider = prov.id
+            WHERE prov.name = ? AND NOT pk.revoked" . $suffix;
+
+        if ($usePurpose) {
+            // We pass an extra param, let's use prepared statements:
+            /** @var array<array-key, string> $pubKeys */
+            $pubKeys = $this->db->col($queryString, 0, $providerName, $purpose);
+        } else {
+            /** @var array<array-key, string> $pubKeys */
+            $pubKeys = $this->db->col($queryString, 0, $providerName);
+        }
         if (empty($pubKeys)) {
             return array();
         }

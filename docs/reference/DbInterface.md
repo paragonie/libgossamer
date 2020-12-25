@@ -33,8 +33,10 @@
 
 1. `string` - Provider
 2. `string` - Public Key
-3. `array` - Metadata
-4. `string` - Hash
+3. `bool` - Limited key?
+4. `string` - Purpose for they key.
+5. `array` - Metadata
+6. `string` - Hash
 
 **Returns** a `bool`.
 
@@ -89,6 +91,14 @@
 **Arguments**:
 
 1. `string` - Provider Name
+2. `?bool` - Limited keys?
+   * If you pass as TRUE, this method only returns limited keys.
+   * If you pass as FALSE, this method only returns non-limited keys.
+   * If you pass as NULL (default), it returns both kinds.
+3. `?string` - Purpose?
+   * If you pass as an empty string, this method disregards purpose.
+   * If you pass as a non-empty string, this method only returns keys that match that purpose.
+   * If you pass as NULL (default), it only returns keys without a purpose.
 
 **Returns** an `array` of `string`s. 
 
