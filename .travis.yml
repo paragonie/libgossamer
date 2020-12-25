@@ -10,6 +10,7 @@ matrix:
     - php: "7.2"
     - php: "7.3"
     - php: "7.4"
+    - php: "8.0"
     - php: "nightly"
     - php: "master"
   allow_failures:
@@ -17,6 +18,8 @@ matrix:
     - php: "master"
 
 install:
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "5.6" ]]; then composer self-update --1; fi
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.0" ]]; then composer self-update --1; fi
   - composer update
   - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.4" ]]; then composer require vimeo/psalm:^3.6; fi
 
