@@ -6,6 +6,11 @@ use ParagonIE\Gossamer\Protocol\Message;
 use ParagonIE\Gossamer\Protocol\SignedMessage;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class SignedMessageTest
+ * @covers \ParagonIE\Gossamer\Protocol\SignedMessage
+ * @package ParagonIE\Gossamer\Tests\Protocol
+ */
 class SignedMessageTest extends TestCase
 {
     const DUMMY_USERNAME = 'phpunit-dummy-user';
@@ -18,8 +23,9 @@ class SignedMessageTest extends TestCase
 
     /**
      * @throws \SodiumException
+     * @before
      */
-    public function setUp()
+    public function setUpNoConflict()
     {
         if (!extension_loaded('sodium')) {
             $this->markTestSkipped('ext/sodium not installed or enabled');

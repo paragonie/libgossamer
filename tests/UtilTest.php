@@ -9,6 +9,7 @@ use SodiumException;
 
 /**
  * Class UtilTest
+ * @covers \ParagonIE\Gossamer\Util
  */
 class UtilTest extends TestCase
 {

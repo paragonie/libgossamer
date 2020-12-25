@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class ChronicleTest
+ * @covers \ParagonIE\Gossamer\Verifier\Chronicle
  * @package ParagonIE\Gossamer\Tests\Verifier
  */
 class ChronicleTest extends TestCase
@@ -17,7 +18,10 @@ class ChronicleTest extends TestCase
     /** @var Chronicle $verifier */
     private $verifier;
 
-    public function setUp()
+    /**
+     * @before
+     */
+    public function setUpNoConflict()
     {
         $this->http = new Guzzle();
         $this->verifier = new Chronicle($this->http);

@@ -5,6 +5,11 @@ use ParagonIE\Gossamer\Release\Signer;
 use ParagonIE\Gossamer\GossamerException;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class SignerTest
+ * @covers \ParagonIE\Gossamer\Release\Signer
+ * @package ParagonIE\Gossamer\Tests\Tools
+ */
 class SignerTest extends TestCase
 {
 
@@ -16,10 +21,10 @@ class SignerTest extends TestCase
 
     /**
      * @throws \SodiumException
+     * @before
      */
-    public function setUp()
+    public function setUpNoConflict()
     {
-        parent::setUp();
         $this->sk = sodium_hex2bin(
             'ed8e80be578b817157d916549580c8fea8c125a23a95e4ab6ca5c96d84e76f30' .
             '8c189d63e4fc43dfa3361f0d808aa60c210a759a1dd258ebdc196c2e9e710f1d'

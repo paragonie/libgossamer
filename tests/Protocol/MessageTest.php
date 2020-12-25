@@ -8,6 +8,7 @@ use SodiumException;
 
 /**
  * Class MessageTest
+ * @covers \ParagonIE\Gossamer\Protocol\Message
  * @package ParagonIE\Gossamer\Tests\Protocol
  */
 class MessageTest extends TestCase
@@ -17,8 +18,9 @@ class MessageTest extends TestCase
 
     /**
      * @throws SodiumException
+     * @before
      */
-    public function setUp()
+    public function setUpNoConflict()
     {
         $keypair = sodium_crypto_sign_keypair();
         $this->signing_key = sodium_crypto_sign_secretkey($keypair);

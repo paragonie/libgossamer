@@ -8,6 +8,7 @@ use SodiumException;
 
 /**
  * Class PacketTest
+ * @covers \ParagonIE\Gossamer\Protocol\Packet
  * @package ParagonIE\Gossamer\Tests\Protocol
  */
 class PacketTest extends TestCase
@@ -17,8 +18,9 @@ class PacketTest extends TestCase
 
     /**
      * @throws SodiumException
+     * @before
      */
-    public function setUp()
+    public function setUpNoConflict()
     {
         $keypair = sodium_crypto_sign_keypair();
         $this->signing_key = sodium_crypto_sign_secretkey($keypair);

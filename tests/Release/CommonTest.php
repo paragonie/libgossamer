@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class CommonTest
+ * @covers \ParagonIE\Gossamer\Release\Common
  * @package ParagonIE\Gossamer\Tests\Release
  */
 class CommonTest extends TestCase

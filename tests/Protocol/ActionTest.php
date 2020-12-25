@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class ActionTest
+ * @covers \ParagonIE\Gossamer\Protocol\Action
  * @package ParagonIE\Gossamer\Tests\Protocol
  */
 class ActionTest extends TestCase
@@ -25,8 +26,9 @@ class ActionTest extends TestCase
 
     /**
      * @throws \SodiumException
+     * @before
      */
-    public function setUp()
+    public function setUpNoConflict()
     {
         if (!extension_loaded('sodium')) {
             $this->markTestSkipped('ext/sodium not installed or enabled');

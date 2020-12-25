@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class ScribeTest
+ * @covers \ParagonIE\Gossamer\Scribe\Chronicle
  * @package ParagonIE\Gossamer\Tests
  */
 class ScribeTest extends TestCase

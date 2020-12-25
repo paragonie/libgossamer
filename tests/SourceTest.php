@@ -11,6 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class SourceTest
+ * @covers \ParagonIE\Gossamer\Source\Chronicle
  * @package ParagonIE\Gossamer\Tests
  */
 class SourceTest extends TestCase

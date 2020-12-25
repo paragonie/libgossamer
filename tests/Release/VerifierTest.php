@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Class VerifierTest
+ * @covers \ParagonIE\Gossamer\Release\Verifier
  * @package ParagonIE\Gossamer\Tests\Release
  */
 class VerifierTest extends TestCase
@@ -16,10 +17,10 @@ class VerifierTest extends TestCase
 
     /**
      * @throws \SodiumException
+     * @before
      */
-    public function setUp()
+    public function setUpNoConflict()
     {
-        parent::setUp();
         $this->pk = sodium_hex2bin(
             '8c189d63e4fc43dfa3361f0d808aa60c210a759a1dd258ebdc196c2e9e710f1d'
         );
