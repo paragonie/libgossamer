@@ -24,6 +24,8 @@ This lets you write code that looks like this:
 ...and then if any keys are compromised, the $keys array will not contain the
 revoked ones.
 
+For more information, please refer to the **[security documentation](security)**.
+
 ### Components
 
 | **Documentation Name** | **Description** |
