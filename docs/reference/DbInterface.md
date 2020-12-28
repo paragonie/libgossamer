@@ -17,9 +17,15 @@
 
 ### `getCheckpointHash()`
 
+The hash of the latest local entry. This method is used for fetching
+new records from the cryptographic ledger.
+
 **Returns** a `string`
 
 ### `updateMeta()`
+
+Updates the checkpoint hash to the latest retrieved from the 
+cryptographic ledger.
 
 **Arguments**:
 
@@ -28,6 +34,11 @@
 **Returns** a `bool`.
 
 ### `appendKey()`
+
+Append a new key to the local store.
+
+Note: No identity verification is performed at this step.
+It **MUST** have already been checked at a higher level.
 
 **Arguments**:
 
@@ -42,6 +53,8 @@
 
 ### `revokeKey()`
 
+Revoke a public key.
+
 **Arguments**:
 
 1. `string` - Provider
@@ -52,6 +65,8 @@
 **Returns** a `bool`.
 
 ### `appendUpdate()`
+
+Appends signature/etc. information about a software update.
 
 **Arguments**:
 
@@ -67,6 +82,8 @@
 
 ### `revokeUpdate()`
 
+Revoke an existing update.
+
 **Arguments**:
 
 1. `string` - Provider
@@ -80,6 +97,8 @@
 
 ### `providerExists()`
 
+Have we seen this Provider before?
+
 **Arguments**:
 
 1. `string` - Provider Name
@@ -87,6 +106,8 @@
 **Returns** a `bool`.
 
 ### `getPublicKeysForProvider()`
+
+Returns the Verification Keys (Ed25519 public keys) for a given provider.
 
 **Arguments**:
 
@@ -104,6 +125,8 @@
 
 ### `getPackageId()`
 
+Returns the database primary key for this package.
+
 **Arguments**:
 
 1. `string` - Package Name
@@ -113,6 +136,8 @@
 
 ### `getProviderId()`
 
+Returns the database primary key for this provider.
+
 **Arguments**:
 
 1. `string` - Provider Name
@@ -120,6 +145,8 @@
 **Returns** an `int`.
 
 ### `getPublicKeyId()`
+
+Returns the database primary key for this public key.
 
 **Arguments**:
 

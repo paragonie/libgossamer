@@ -6,6 +6,8 @@
 
 ### `get()`
 
+Performs an HTTP GET request.
+
 **Arguments**:
 
 1. `string` - URL
@@ -17,6 +19,8 @@ Returns an `array`:
   * `status`: `int`
 
 ### `post()`
+
+Performs an HTTP POST request.
 
 **Arguments**:
 

@@ -9,6 +9,8 @@ This interface extends both [`LedgerInterface`](LedgerInterface.md) and
 
 ### `signedMessageFound()`
 
+Was this `SignedMessage` found in the ledger?
+
 **Arguments**:
 
 1. `SignedMessage` $signedMessage
