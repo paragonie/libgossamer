@@ -24,12 +24,20 @@ interface DbInterface
     /**
      * @param string $provider
      * @param string $publicKey
-     * @param bool $limited,
+     * @param bool $limited
+     * @param string $purpose
      * @param array $meta
      * @param string $hash
      * @return bool
      */
-    public function appendKey($provider, $publicKey, $limited = false, array $meta = array(), $hash = '');
+    public function appendKey(
+        $provider,
+        $publicKey,
+        $limited = false,
+        $purpose = '',
+        array $meta = array(),
+        $hash = ''
+    );
 
     /**
      * @param string $provider
@@ -107,9 +115,10 @@ interface DbInterface
     /**
      * @param string $providerName
      * @param ?bool $limited
+     * @param ?string $purpose
      * @return array<array-key, string>
      */
-    public function getPublicKeysForProvider($providerName, $limited = null);
+    public function getPublicKeysForProvider($providerName, $limited = null, $purpose = null);
 
     /**
      * @param string $packageName

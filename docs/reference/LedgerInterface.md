@@ -6,9 +6,13 @@
 
 ### `clearInstances()`
 
+Returns a new instance of this ledger with no peer instances.
+
 Returns this object that implements `LedgerInterface`.
 
 ### `populateInstances()`
+
+Returns a new instance of this ledger with the given peers.
 
 **Arguments**:
 

@@ -88,13 +88,20 @@ class DummyDB implements DbInterface
      * @param string $provider
      * @param string $publicKey
      * @param bool $limited
+     * @param string $purpose
      * @param array $meta
      * @param string $hash
      * @return bool
      * @throws \SodiumException
      */
-    public function appendKey($provider, $publicKey, $limited = false, array $meta = array(), $hash = '')
-    {
+    public function appendKey(
+        $provider,
+        $publicKey,
+        $limited = false,
+        $purpose = '',
+        array $meta = array(),
+        $hash = ''
+    ) {
         $providerId = $this->getProviderId($provider);
         $publicKeyId = $this->getPublicKeyId($publicKey, $providerId);
         if ($meta) {
@@ -261,10 +268,11 @@ class DummyDB implements DbInterface
     /**
      * @param string $providerName
      * @param ?bool $limited
+     * @param ?string $purpose
      * @return array<array-key, string>
      * @throws \SodiumException
      */
-    public function getPublicKeysForProvider($providerName, $limited = null)
+    public function getPublicKeysForProvider($providerName, $limited = null, $purpose = null)
     {
         $providerId = $this->getProviderId($providerName);
         $return = array();

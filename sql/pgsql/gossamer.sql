@@ -12,6 +12,7 @@ CREATE TABLE gossamer_provider_publickeys (
     ledgerhash TEXT,
     revokehash TEXT NULL,
     limited BOOLEAN DEFAULT FALSE,
+    purpose TEXT NULL,
     metadata TEXT,
     revoked BOOLEAN DEFAULT FALSE
 );

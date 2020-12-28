@@ -90,6 +90,14 @@ An `AppendKey` action **MUST** contain the following fields:
 | `provider`   | Provider name.                      |
 | `public-key` | Base64url-encoded verification key. |
 
+An `AppendKey` action **MAY ALSO** Contain the following optional fields:
+
+| Name         | Description                                                        |
+|--------------|--------------------------------------------------------------------|
+| `meta`       | JSON-encoded string of optional metadata (e.g. Git commit hashes). |
+| `limited`    | Boolean (True = Limited key, False = Normal key). Default: False.  |
+| `purpose`    | String. Used for identifying keys used for non-Gossamer purposes.  |
+
 If the `provider` is not found in the local key store when an `AppendKey`
 action is encountered, then it **MUST** be created in the local key store.
 
@@ -99,11 +107,19 @@ must be signed by the same provider (or the Super Provider, if applicable).
 An `AppendKey` action **MAY** contain a `limited` field, which must be boolean.
 If it is absent, it is implicitly false. The first `AppendKey` for a provider
 **MUST NOT** have `limited` set to `TRUE`.
- 
-The provider must have at least one non-limited, non-revoked key in order to
-create limited keys.
 
-Limited keys can only be used to issue an `AppendUpdate` action.
+An `AppendKey` action **MAY** also contain a `purpose` field, which must be a
+valid UTF-8 string. Any key with a `purpose` **MUST NOT** be used with any other
+Gossamer action. The `purpose` field is used to identify public keys shared through
+Gossamer that are only intended for non-Gossamer uses (i.e. not for software
+updates).
+
+The provider must have at least one non-limited, non-revoked key without a
+`purpose` field in order to create limited keys.
+
+**Limited keys can only be used to issue an `AppendUpdate` action.**
+
+**Keys with a `purpose` field cannot be used in Gossamer.**
 
 When this action is performed, it should insert a new row in a database.
 
@@ -120,6 +136,10 @@ A `RevokeKey` action **MUST** contain the following fields:
 If the `provider` is not found in the local key store when a `RevokeKey` action
 is encountered, an error **MUST** be raised. In most languages, this means
 throwing an Exception.
+
+If the `public-key` does not belong to the correct `provider` (or the Super
+Provider, if applicable), an error **MUST** be raised. In most languages, this
+means throwing an Exception.
 
 The `SignedMessage` that encapsulates this Action must be signed by the provider
 (or the Super Provider, if applicable).
@@ -139,6 +159,12 @@ An `AppendUpdate` action **MUST** contain the following fields:
 | `signature`  | Signature of the update file.            |
 | `package`    | Name of the package (owned by provider). |
 | `release`    | Version being released.                  |
+
+An `AppendUpdate` action **MAY ALSO** Contain the following optional fields:
+
+| Name         | Description                                                        |
+|--------------|--------------------------------------------------------------------|
+| `meta`       | JSON-encoded string of optional metadata (e.g. Git commit hashes). |
 
 If the `provider` is not found in the local key store when an `AppendUpdate`
 action is encountered, an error **MUST** be raised. In most languages, this
@@ -226,11 +252,11 @@ Gossamer, you **MAY** treat the above as an enum.
 ## Invalid Messages in the Ledger
 
 Any records in the ledger that do not contain a valid JSON message 
-must be skipped.
+**MUST** be skipped.
 
 Any records in the ledger that contain a valid JSON message, but
 do not contain a `verb` field conforming to one of the actions defined in
-this specification, must be skipped.
+this specification, **MUST** be skipped.
 
 The above two rules allow a single ledger instance to be used for
 multiple purposes without interfering with the normal operation of the

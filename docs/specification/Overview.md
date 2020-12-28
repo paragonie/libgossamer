@@ -77,4 +77,6 @@ Internally, these keywords are referred to as `verbs`.
      (which, also, will **NOT** be silent), such an attack will put their own
      citizens at risk.
 
+**See also: [Security Documentation](../security)**
+
 > **Next**: [The Gossamer Protocol](Protocol.md)
