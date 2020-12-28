@@ -11,13 +11,13 @@ mor may not be pertinent for a given software ecosystem) and extend them.
 
 ## Terms and Concepts
 
-* **Suppliers** own **packages** and have a unique identifying name.
+* **Providers** own **packages** and have a unique identifying name.
 * **Signing Keys** are Ed25519 secret keys.
 * **Verification Keys** are Ed25519 public keys.
-* **Packages** are discrete software deliverables with a distinct name per supplier.
+* **Packages** are discrete software deliverables with a distinct name per Provider.
 * **Updates** are changes to a package.
-* **Attestations** are statements made by a one supplier about an update owned by
-  another supplier.
+* **Attestations** are statements made by a one provider about an update owned by
+  another provider.
 
 ## Security Goals
 
@@ -81,7 +81,7 @@ The following are **NOT** in the scope of Gossamer:
 * Preventing local attacks
 * Preventing insecure software from being written in the first place
 * Preventing datacenter attacks
-* AuthN/AuthZ of suppliers to the update server
+* AuthN/AuthZ of providers to the update server
   * Gossamer treats the update server as a black box
 
 ## Architecture
@@ -92,7 +92,7 @@ to trade-offs that some users might want to make.
 A minimalistic description of a software distribution system using Gossamer is as follows:
 
 1. The update server, which developers authenticate to through some mechanism, and upload
-   new versions of their software. **Suppliers** write to this, **Users** read from this.
+   new versions of their software. **Providers** write to this, **Users** read from this.
 2. An append-only cryptographic ledger, which encompasses all the Gossamer records.
    * You MAY also have one or more replica instances of this ledger (for durability).
 3. The client-side library (e.g. this source code repository) that parses messages on the
@@ -100,7 +100,7 @@ A minimalistic description of a software distribution system using Gossamer is a
    verification keys.
 
 Users can use the client-side library in step 3 to obtain the verification keys that are trusted
-for a particular supplier at this given point in time. This data is parsed and verified from
+for a particular provider at this given point in time. This data is parsed and verified from
 the ledger (step 2) and used to validate the files served from the update server (step 1).
 Because the user is directly validating and storing a current snapshot of the world, we
 call this is the **local trust** configuration.
@@ -118,6 +118,21 @@ server that handles the Gossamer protocol and configuring each website to trust 
 will save a lot of unnecessary redundancy and wasted disk space.)
 
 It is **NOT** mandatory for Gossamer networks to support both of these configurations.
+
+### Synchronizer
+
+The high-level component responsible for parsing new records in the cryptographic ledger 
+and maintaining the current state of the world in a **local trust** configuration is called
+the **Synchronizer**. This is also the component that will be publicly interfaced with by
+the end user (although probably through some other API).
+
+The Synchronizer is responsible for verifying the integrity of new records in the ledger and
+making the appropriate changes to the local snapshot. This includes making all access control
+and permission decisions (i.e. *Was this signed by a verification key owned by the same Provider?*).
+
+Further reading:
+
+* [Reference Documentation for the `Synchronizer` class](../reference/Synchronizer.md)
 
 ## Attack Profiles
 
@@ -139,10 +154,10 @@ users expecting an updated version of software they rely on.
 #### Gossamer Mitigation
 
 Updates must be digitally signed by the developer, using a verification key associated with 
-the supplier identity, before anyone will trust an update enough to install it.
+the provider identity, before anyone will trust an update enough to install it.
 
 Additionally, new verification keys **MUST** be signed by an existing, currently-trusted, and 
-not limited verification key associated with the same supplier, in order for the Gossamer
+not limited verification key associated with the same provider, in order for the Gossamer
 protocol to accept it.
 
 (Exception: Super Providers can sign messages for other Providers, if the network opts to
@@ -162,36 +177,36 @@ unauthorized third party.
    after being verified by trusted third parties. These verifications can range from a simple
    spot check of the code to a full-blown security audit.
    
-   End users can decide which suppliers they trust, and for which kinds of attestations, and what 
+   End users can decide which providers they trust, and for which kinds of attestations, and what 
    threshold needs to be satisfied before an update is accepted. These trust decisions are **NOT**
    advertised to the Gossamer network.
 2. The `RevokeUpdate` mechanism can be used to prevent systems from updating to a previously
    trusted software release after the compromise is discovered.
 
-### Theft of a Supplier's Signing Key
+### Theft of a Provider's Signing Key
 
-An unauthorized third party has obtained the signing key for a supplier, and intends
-to use it to sign malicious updates / keys on behalf of the supplier.
+An unauthorized third party has obtained the signing key for a provider, and intends
+to use it to sign malicious updates / keys on behalf of the provider.
 
 #### Gossamer Mitigations 
 
 The optional **Super Provider** feature allows a single Provider for the entire network to handle
 extreme revocation scenarios. The Super Provider can revoke all updates/keys affected by the attacker
-and approve new verification keys for the compromised supplier.
+and approve new verification keys for the compromised provider.
 
-For networks where the Super Provider isn't present, suppliers can minimize the blast radius of
+For networks where the Super Provider isn't present, providers can minimize the blast radius of
 a potential compromise by using limited keys for day-to-day release signing. (Limited keys can only
 be used for `AppendUpdate` messages.)
 
 In either scenario, the malicious updates and any compromised keys are to be revoked.
 
-In the worst case scenario (no Super Provider, a normal key was leaked), the supplier identity **MUST**
-be burned and all software moved to a new supplier identity. The mechanism for this is out of scope
+In the worst case scenario (no Super Provider, a normal key was leaked), the provider identity **MUST**
+be burned and all software moved to a new provider identity. The mechanism for this is out of scope
 for Gossamer (but is straightforward to implement).
 
 ### Government-Mandated Stealth Backdoor
 
-A government agency has demanded a stealth backdoor be introduced into some supplier's software.
+A government agency has demanded a stealth backdoor be introduced into some provider's software.
 
 They might go about this by issuing a court order under seal to the developers.
 
@@ -212,12 +227,12 @@ If a government decides to forego stealth and carry on with a backdoor, they inc
 leaking their capabilities to the public. Additionally, they risk weakening other systems in their
 own country's infrastructure and putting their own citizens at risk.
 
-### Theft of the *Super Supplier's* Signing Keys
+### Theft of the *Super Provider's* Signing Keys
 
-In Gossamer networks that support the use of Super Suppliers--which can perform actions on behalf
-of *any* supplier: An unauthorized third party has obtained the secret key for the Super Supplier.
+In Gossamer networks that support the use of Super Providers--which can perform actions on behalf
+of *any* provider: An unauthorized third party has obtained the secret key for the Super Provider.
 
-(This attack profile is not relevant to networks that do not have Super Suppliers.)
+(This attack profile is not relevant to networks that do not have Super Providers.)
 
 #### Gossamer Mitigations
 
@@ -228,18 +243,38 @@ recovery after-the-fact.
 **However, if this ever happened, it would still be an all-hands-on-deck, shut-everything-down
 emergency.**
 
-Networks that adopt the Super Supplier feature **SHOULD** take extra steps to secure those keys--such
+Networks that adopt the Super Provider feature **SHOULD** take extra steps to secure those keys--such
 as the employment of Hardware Security Modules or airgaps--to minimize the risk of exposure and leakage.
 
-Additionally, the Super Supplier **MUST** be used sparingly (i.e. as a break-glass feature for recovering
-other suppliers from a system compromise, or to revoke updates containing malware).
+Additionally, the Super Provider **MUST** be used sparingly (i.e. as a break-glass feature for recovering
+other providers from a system compromise, or to revoke updates containing malware).
+
+### Cryptographic Ledger Compromised
+
+An unauthorized third party obtains access to the servers that serve the contents of the
+append-only cryptographic ledger and intend to forge or alter records.
+
+#### Gossamer Mitigations
+
+Every record is verified by the [Synchronizer](#synchronizer) as it's read from the ledger.
+Even privileged access to the ledger only permits an attacker to inject invalid records
+that get rejected and consequently skipped by the Synchronizer.
+
+Any attacker that attempts to insert a record that performs an action without a valid
+cryptographic signature from the pertinent Provider will be wasting their time and alerting
+the world to the compromise.
+
+When the ledger backing a Gossamer network is [Chronicle](https://github.com/paragonie/chronicle):
+Replica instances independently verify each record before duplicating them. Additionally,
+Chronicle supports cross-signing onto other instances, allowing independent verification
+across networks or across replica instances.
 
 ## Recommendations
 
 ### General Recommendations
 
 1. Default to Local Trust, allow hosting companies to switch to Federated Trust to save space.
-2. Define a Super Supplier but rarely, if ever, actually use it.
+2. Define a Super Provider but rarely, if ever, actually use it.
 3. Have multiple replica instances of the ledger, and have end users query *those* instead of
    the primary instance. (This allows for better horizontal scaling.)
 
@@ -250,4 +285,4 @@ other suppliers from a system compromise, or to revoke updates containing malwar
 2. Use a microservice model to keep the keys used for publishing messages
    onto the cryptographic ledger out of the hands of unauthorized third parties
    if the update server is breached.
-3. When first rolling out Gossamer support, make sure suppliers cannot namesquat.
+3. When first rolling out Gossamer support, make sure providers cannot namesquat.

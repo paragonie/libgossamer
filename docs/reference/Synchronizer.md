@@ -7,6 +7,8 @@ parsing [`Action`](Protocol/Action.md) objects from the
 [`SignedMessage`](Protocol/SignedMessage.md) objects defined in the ledger, and
 then performing each action against the local database.
 
+The public method most implementations will want to call is [`sync()`](#sync).
+
 ### Security Note
 
 **MOST security decisions** (i.e. which public keys belong to which provider,
