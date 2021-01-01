@@ -7,7 +7,7 @@ CREATE TABLE gossamer_providers (
 -- Public keys for each provider
 CREATE TABLE gossamer_provider_publickeys (
     id INTEGER NOT NULL PRIMARY KEY,
-    provider BIGINT REFERENCES gossamer_providers (id),
+    provider INTEGER REFERENCES gossamer_providers (id),
     publickey CHAR(64), -- Hex-encoded,
     ledgerhash TEXT,
     revokehash TEXT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE gossamer_provider_publickeys (
 -- Packages (Plugins / Themes)
 CREATE TABLE gossamer_packages (
     id INTEGER NOT NULL PRIMARY KEY,
-    provider BIGINT REFERENCES gossamer_providers (id),
+    provider INTEGER REFERENCES gossamer_providers (id),
     name TEXT,
     metadata TEXT
 );
@@ -30,8 +30,8 @@ CREATE UNIQUE INDEX gossamer_package_name_index
 -- Versioned releases for each package
 CREATE TABLE gossamer_package_releases (
     id INTEGER NOT NULL PRIMARY KEY,
-    package BIGINT REFERENCES gossamer_packages (id),
-    publickey BIGINT REFERENCES gossamer_provider_publickeys (id),
+    package INTEGER REFERENCES gossamer_packages (id),
+    publickey INTEGER REFERENCES gossamer_provider_publickeys (id),
     version TEXT,
     signature TEXT,
     ledgerhash TEXT,
