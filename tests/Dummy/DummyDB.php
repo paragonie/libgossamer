@@ -65,6 +65,9 @@ class DummyDB implements DbInterface
         if (!isset($this->state[self::TABLE_PACKAGE_RELEASES])) {
             $this->state[self::TABLE_PACKAGE_RELEASES] = [];
         }
+        if (!isset($this->state[self::TABLE_ATTESTATIONS])) {
+            $this->state[self::TABLE_ATTESTATIONS] = [];
+        }
         $this->cacheKey = sodium_crypto_shorthash_keygen();
     }
 
@@ -129,16 +132,6 @@ class DummyDB implements DbInterface
     }
 
     /**
-     * @param callable $callback
-     * @return self
-     */
-    public function setAttestCallback($callback)
-    {
-        $this->attestCallback = $callback;
-        return $this;
-    }
-
-    /**
      * @param string $provider
      * @param string $package
      * @param string $release
@@ -157,11 +150,20 @@ class DummyDB implements DbInterface
         array $meta = array(),
         $hash = ''
     ) {
-        if (is_callable($this->attestCallback)) {
-            $cb = $this->attestCallback;
-            return (bool) $cb($provider, $package, $release, $attestor, $attestation, $meta, $hash);
+        $releaseId = $this->getRelease($provider, $package, $release);
+        $index = $this->hashIndex(self::TABLE_ATTESTATIONS,  $releaseId . '@@' . $attestor);
+        if (!isset($this->state[self::TABLE_PACKAGE_RELEASES][$index])) {
+            $this->state[self::TABLE_PACKAGE_RELEASES][$index] = [
+                'id' => $index,
+                'release_id' => $releaseId,
+                'attestor' => $attestor,
+                'attestation' => $attestation,
+                'ledgerhash' => $hash,
+                'revokehash' => null,
+                'metadata' => json_encode($meta)
+            ];
         }
-        return false;
+        return true;
     }
 
     /**
@@ -351,5 +353,34 @@ class DummyDB implements DbInterface
     public function isKeyLimited($providerName, $publicKey)
     {
         return false;
+    }
+
+    /**
+     * @param string $providerName
+     * @param string $packageName
+     * @param string $version
+     * @param int $offset          For supporting multiple releases with the same name (if some were revoked)
+     * @return array
+     */
+    public function getRelease($providerName, $packageName, $version, $offset = 0)
+    {
+        $providerId = $this->getProviderId($providerName);
+        $packageId = $this->getPackageId($packageName, $providerId);
+        $index = $this->hashIndex(self::TABLE_PACKAGE_RELEASES, $packageId . '@@' . $version);
+        if (empty($this->state[self::TABLE_PACKAGE_RELEASES][$index])) {
+            return [];
+        }
+        return $this->state[self::TABLE_PACKAGE_RELEASES][$index];
+    }
+
+    /**
+     * @param string $providerName
+     * @param string $packageName
+     * @param string $version
+     * @return array{attestor: string, attestation: string, ledgerhash: string}[]
+     */
+    public function getAttestations($providerName, $packageName, $version)
+    {
+
     }
 }
