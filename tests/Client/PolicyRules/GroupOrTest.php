@@ -31,14 +31,14 @@ class GroupOrTest extends TestCase
         $policy1 = (new AttestPolicy())
             ->addRule(new GroupOr(
                 new AttestedAt(AttestPolicy::SECURITY_AUDIT, array('paragonie')),
-                new AttestedAt(AttestPolicy::CODE_REVIEW, array('paragonie')),
+                new AttestedAt(AttestPolicy::CODE_REVIEW, array('paragonie'))
             ));
         $this->assertFalse($policy1->passes($attestations));
 
         $policy2 = (new AttestPolicy())
             ->addRule(new GroupOr(
                 new AttestedAt(AttestPolicy::SECURITY_AUDIT, array('paragonie')),
-                new AttestedAt(AttestPolicy::CODE_REVIEW, array('roave')),
+                new AttestedAt(AttestPolicy::CODE_REVIEW, array('roave'))
             ));
         $this->assertTrue($policy2->passes($attestations));
     }
