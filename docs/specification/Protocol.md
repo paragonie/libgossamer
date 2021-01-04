@@ -225,17 +225,30 @@ oversight into the protocol.
 
 Attestations **MUST** be one of the following:
 
-| Attestation   | Meaning                                                              |
-|---------------|----------------------------------------------------------------------|
-| `reproduced`  | The attestor was able to reproduce this update from the source code. |
-| `spot-check`  | The attestor provided a spot check for this update.                  |
-| `code-review` | The attestor performed a code review for this update.                |
-| `sec-audit`   | This update passed a security audit performed by the attestor.       |
+| Attestation    | Meaning                                                              | Connotation |
+|----------------|----------------------------------------------------------------------|-------------|
+| `vote-against` | The attestor claims that this update should NOT be installed.        | Negative    |
+| `reproduced`   | The attestor was able to reproduce this update from the source code. | Positive    |
+| `spot-check`   | The attestor provided a spot check for this update.                  | Positive    |
+| `code-review`  | The attestor performed a code review for this update.                | Positive    |
+| `sec-audit`    | This update passed a security audit performed by the attestor.       | Positive    |
 
 When implementing support for attestations in a protocol that builds atop
 Gossamer, you **MAY** treat the above as an enum.
 
-* Reproducing a build package from the source code (`reproduiced`) is important,
+**Warning**: Attestations are immutable and **CANNOT** be revoked.
+
+#### Negative Attestations
+
+* If you want to advise users to not install an update, simply issue a `vote-against`
+  attestation. This is useful for identifying that an old version of software SHOULD NOT
+  be installed upon the discovery of a security flaw. However, unlike revocation,
+  it will only take effect if users trust your `vote-against` attestations and configure
+  them into their [attestation policies](../reference/Client/AttestPolicy.md).
+
+#### Positive Attestations
+
+* Reproducing a build package from the source code (`reproduced`) is important,
   but can be performed without human attention.
 * A `spot-check` can be done in a hurry, and only certifies that nothing leaped
   out to the reviewer as "obviously malicious or broken".

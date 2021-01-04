@@ -9,6 +9,7 @@
     <projectFiles>
         <directory name="lib" />
         <ignoreFiles>
+            <directory name="tests" />
             <directory name="vendor" />
         </ignoreFiles>
     </projectFiles>

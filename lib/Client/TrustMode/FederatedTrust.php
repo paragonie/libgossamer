@@ -96,7 +96,7 @@ class FederatedTrust implements TrustModeInterface
      * @param string $provider
      * @param string $package
      * @param string $version
-     * @return array<array-key, array{metadata:array, publickey: string, signature: string}>
+     * @return array{attestor: string, attestation: string, ledgerhash: string}[]
      */
     protected function getAttestationsHttp($provider, $package, $version)
     {
@@ -107,7 +107,7 @@ class FederatedTrust implements TrustModeInterface
 
         // Decode the response body as a JSON object.
         /**
-         * @var array<array-key, array{metadata:array, publickey: string, signature: string}> $decoded
+         * @var array{attestor: string, attestation: string, ledgerhash: string}[] $decoded
          */
         $decoded = json_decode($response['body'], true);
         if (empty($decoded)) {

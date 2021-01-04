@@ -15,7 +15,7 @@ class UpdateFile
     /** @var int $algorithm */
     protected $algorithm = Common::SIGN_ALG_ED25519_BLAKE2B;
 
-    /** @var array $attestations */
+    /** @var array{attestor: string, attestation: string, ledgerhash: string}[] $attestations */
     protected $attestations = [];
 
     /** @var array $metadata */
@@ -39,19 +39,25 @@ class UpdateFile
      * @param string $publicKey
      * @param string $signature
      * @param array $metadata
-     * @param array $attestations
+     * @param array{attestor: string, attestation: string, ledgerhash: string}[] $attestations
+     * @param ?AttestPolicy $attestPolicy
      */
     public function __construct(
         $publicKey,
         $signature,
         $metadata = [],
-        $attestations = []
+        $attestations = [],
+        $attestPolicy = null
     ) {
         $this->publicKey = $publicKey;
         $this->signature = $signature;
         $this->metadata = $metadata;
         $this->attestations = $attestations;
         $this->tmpDir = \sys_get_temp_dir();
+        if (is_null($attestPolicy)) {
+            $attestPolicy = new AttestPolicy();
+        }
+        $this->attestPolicy = $attestPolicy;
     }
 
     /**
@@ -85,10 +91,19 @@ class UpdateFile
     public function isFileValid($streamOrFilePath)
     {
         $signatureValid = $this->isSignatureValid($streamOrFilePath);
+        $attestationsPass = $this->passesAttestationPolicy();
+        return $signatureValid && $attestationsPass;
+    }
 
-        // TODO: Hook into attestation policy
-
-        return $signatureValid;
+    /**
+     * Do the set of attestations registered for this update pass
+     * the local policy?
+     *
+     * @return bool
+     */
+    public function passesAttestationPolicy()
+    {
+        return $this->attestPolicy->passes($this->attestations);
     }
 
     /**

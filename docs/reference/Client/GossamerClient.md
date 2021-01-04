@@ -1,4 +1,4 @@
-# Libgossamer API Reference - DbInterface
+# Libgossamer API Reference - Client - GossamerClient
 
 * **Fully Qualified Class Name**: `ParagonIE\Gossamer\Client\GossamerClient`
 
@@ -8,6 +8,7 @@
 
 1. [`TrustModeInterface`](TrustModeInterface.md)
 2. [`AttestPolicy`](AttestPolicy.md) or NULL -- defaults to NULL
+   which results in a blank attestation policy
 3. `int` - Algorithm identifier (see [`ParagonIE\Gossamer\Release\Common`](../Release/Common.md))
    -- defaults to the constant for Ed25519 with BLAKE2b
 
