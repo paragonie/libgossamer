@@ -1,6 +1,7 @@
 <?php
 namespace ParagonIE\Gossamer\Tests\Protocol;
 
+use ParagonIE\Gossamer\Client\AttestPolicy;
 use ParagonIE\Gossamer\Protocol\Action;
 use ParagonIE\Gossamer\Protocol\Message;
 use ParagonIE\Gossamer\Tests\Dummy\DummyDB;
@@ -106,6 +107,35 @@ class ActionTest extends TestCase
         );
     }
 
+    public function testAppendAttestUpdate()
+    {
+        $action = Action::fromMessage($this->getAppendUpdateMessage('wordpress/core', '9.99.99'));
+        $action->perform($this->db);
+        $action = Action::fromMessage($this->getAppendAttestMessage(
+            AttestPolicy::REPRODUCED,
+            'paragonie',
+            'wordpress/core',
+            '9.99.99'
+        ));
+        $action->perform($this->db);
+        $action = Action::fromMessage($this->getAppendAttestMessage(
+            AttestPolicy::SPOT_CHECK,
+            'roave',
+            'wordpress/core',
+            '9.99.99'
+        ));
+        $action->perform($this->db);
+        $state = $this->db->getState();
+        $this->assertGreaterThan(0, count($state[DummyDB::TABLE_ATTESTATIONS]));
+
+        $attestations = array_values(array_shift($state[DummyDB::TABLE_ATTESTATIONS]));
+        $this->assertEquals('paragonie', $attestations[0]['attestor']);
+        $this->assertEquals(AttestPolicy::REPRODUCED, $attestations[0]['attestation']);
+
+        $this->assertEquals('roave', $attestations[1]['attestor']);
+        $this->assertEquals(AttestPolicy::SPOT_CHECK, $attestations[1]['attestation']);
+    }
+
     /**
      * @return Message
      * @throws \SodiumException
@@ -173,6 +203,7 @@ class ActionTest extends TestCase
         );
         return new Message($json, $signature);
     }
+
     /**
      * @param string $package
      * @param string $version
@@ -199,6 +230,36 @@ class ActionTest extends TestCase
                     hash('sha384', $version, true) . $this->db->getCacheKey()
                 )
             ),
+            'meta' => $meta
+        ]);
+        $signature = sodium_bin2hex(
+            sodium_crypto_sign_detached($json, $this->sk)
+        );
+        return new Message($json, $signature);
+    }
+
+    /**
+     * @param string $msg
+     * @param string $attestor
+     * @param string $package
+     * @param string $version
+     * @param array $meta
+     * @return Message
+     */
+    protected function getAppendAttestMessage(
+        $msg = AttestPolicy::REPRODUCED,
+        $attestor = self::DUMMY_USERNAME,
+        $package = 'foo/bar',
+        $version = '0.0.1',
+        array $meta = array()
+    ) {
+        $json = json_encode([
+            'verb' => Action::VERB_ATTEST_UPDATE,
+            'provider' => self::DUMMY_USERNAME,
+            'package' => $package,
+            'release' => $version,
+            'attestation' => $msg,
+            'attestor' => $attestor,
             'meta' => $meta
         ]);
         $signature = sodium_bin2hex(

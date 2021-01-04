@@ -19,9 +19,6 @@ class DummyDB implements DbInterface
     /** @var array $state */
     protected $state;
 
-    /** @var ?callable $attestCallback */
-    protected $attestCallback = null;
-
     /**
      * @return string
      */
@@ -140,6 +137,7 @@ class DummyDB implements DbInterface
      * @param array $meta
      * @param string $hash
      * @return bool
+     * @psalm-suppress MixedAssignment
      */
     public function attestUpdate(
         $provider,
@@ -150,12 +148,21 @@ class DummyDB implements DbInterface
         array $meta = array(),
         $hash = ''
     ) {
-        $releaseId = $this->getRelease($provider, $package, $release);
-        $index = $this->hashIndex(self::TABLE_ATTESTATIONS,  $releaseId . '@@' . $attestor);
-        if (!isset($this->state[self::TABLE_PACKAGE_RELEASES][$index])) {
-            $this->state[self::TABLE_PACKAGE_RELEASES][$index] = [
+        $providerId = $this->getProviderId($provider);
+        $packageId = $this->getPackageId($package, $providerId);
+        $releaseData = $this->getRelease($provider, $package, $release);
+        if (empty($releaseData)) {
+            return false;
+        }
+        $releaseIndex = $this->hashIndex(self::TABLE_PACKAGE_RELEASES, $packageId . '@@' . $release);
+        $index = $this->hashIndex(self::TABLE_ATTESTATIONS, $packageId . '@@' . $release . '@@' . $attestor);
+        if (!isset($this->state[self::TABLE_ATTESTATIONS][$releaseIndex])) {
+            $this->state[self::TABLE_ATTESTATIONS][$releaseIndex] = [];
+        }
+        if (!isset($this->state[self::TABLE_ATTESTATIONS][$releaseIndex][$index])) {
+            $this->state[self::TABLE_ATTESTATIONS][$releaseIndex][$index] = [
                 'id' => $index,
-                'release_id' => $releaseId,
+                'release_id' => $releaseData['id'],
                 'attestor' => $attestor,
                 'attestation' => $attestation,
                 'ledgerhash' => $hash,
@@ -381,6 +388,9 @@ class DummyDB implements DbInterface
      */
     public function getAttestations($providerName, $packageName, $version)
     {
-
+        $providerId = $this->getProviderId($providerName);
+        $packageId = $this->getPackageId($packageName, $providerId);
+        $releaseIndex = $this->hashIndex(self::TABLE_PACKAGE_RELEASES, $packageId . '@@' . $version);
+        return $this->state[self::TABLE_ATTESTATIONS][$releaseIndex];
     }
 }
