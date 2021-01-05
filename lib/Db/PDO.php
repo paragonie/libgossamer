@@ -155,18 +155,6 @@ class PDO implements DbInterface
     }
 
     /**
-     * Add a callback to handle AttestUpdate actions.
-     *
-     * @param callable $callback
-     * @return self
-     */
-    public function setAttestCallback($callback)
-    {
-        $this->attestCallback = $callback;
-        return $this;
-    }
-
-    /**
      * Perform an AttestUpdate action against this database.
      *
      * Does nothing unless setAttestCallback() has been called.
@@ -189,11 +177,21 @@ class PDO implements DbInterface
         array $meta = array(),
         $hash = ''
     ) {
-        if (is_callable($this->attestCallback)) {
-            $cb = $this->attestCallback;
-            return (bool) $cb($provider, $package, $release, $attestor, $attestation, $meta, $hash);
-        }
-        return false;
+        $this->db->beginTransaction();
+        $attestorId = $this->getProviderId($attestor);
+        $releaseId = $this->getRelease($provider, $package, $release);
+        /** @var array<string, scalar> $inserts */
+        $inserts = array(
+            'release_id' => $releaseId,
+            'attestor' => $attestorId,
+            'attestation' => $attestation,
+            'ledgerhash' => $hash,
+            'metadata' => json_encode($meta)
+        );
+        $this->db->insert(self::TABLE_ATTESTATIONS, $inserts);
+        $inserted = $this->db->commit();
+        $updated = $this->updateMeta($hash);
+        return $inserted && $updated;
     }
 
     /**
@@ -454,5 +452,77 @@ class PDO implements DbInterface
             $providerName,
             $publicKey
         );
+    }
+
+    /**
+     * Get information about a single release.
+     *
+     * @param string $providerName
+     * @param string $packageName
+     * @param string $version
+     * @param int $offset
+     * @return array
+     * @throws \TypeError
+     * @throws GossamerException
+     */
+    public function getRelease($providerName, $packageName, $version, $offset = 0)
+    {
+        if (!is_int($offset)) {
+            throw new \TypeError('Offset must be an integer');
+        }
+        /** @var array<string, int|string|bool|array|null> $results */
+        $results = $this->db->row(
+            "SELECT r.*
+             FROM " . self::TABLE_PACKAGE_RELEASES . " r
+             JOIN " . self::TABLE_PACKAGES . " p ON r.package = p.id
+             JOIN " . self::TABLE_PROVIDERS ." v ON p.provider = v.id
+             WHERE v.name = ? AND p.name = ? AND r.version = ?
+             OFFSET $offset LIMIT 1",
+            $providerName,
+            $packageName,
+            $version
+        );
+        if (empty($results)) {
+            throw new GossamerException("Version {$version} not found for package {$providerName}/{$packageName}");
+        }
+        if (!empty($results['metadata']) && is_string($results['metadata'])) {
+            $results['metadata'] = (array) json_decode($results['metadata'], true);
+        }
+        return $results;
+    }
+
+    /**
+     * @param string $providerName
+     * @param string $packageName
+     * @param string $version
+     * @return array<array-key, array{attestor: string, attestation: string, ledgerhash: string}>
+     */
+    public function getAttestations($providerName, $packageName, $version)
+    {
+        /** @var int $releaseId */
+        $releaseId = $this->db->cell(
+            "SELECT r.id
+             FROM " . self::TABLE_PACKAGE_RELEASES . " r
+             JOIN " . self::TABLE_PACKAGES . " p ON r.package = p.id
+             JOIN " . self::TABLE_PROVIDERS ." v ON p.provider = v.id
+             WHERE v.name = ? AND p.name = ? AND r.version = ? AND NOT r.revoked",
+            $providerName,
+            $packageName,
+            $version
+        );
+        if (empty($releaseId)) {
+            throw new GossamerException('Release not found');
+        }
+        /** @var array<array-key, array{attestor: string, attestation: string, ledgerhash: string}> $results */
+        $results = $this->db->run(
+            "SELECT attestor, attestation, ledgerhash 
+             FROM " . self::TABLE_ATTESTATIONS . "
+             WHERE release_id = ?",
+            $releaseId
+        );
+        if (empty($results)) {
+            return array();
+        }
+        return $results;
     }
 }

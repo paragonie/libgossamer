@@ -9,6 +9,7 @@
     <projectFiles>
         <directory name="lib" />
         <ignoreFiles>
+            <directory name="tests" />
             <directory name="vendor" />
         </ignoreFiles>
     </projectFiles>
@@ -20,7 +21,10 @@
     </stubs>
 
     <issueHandlers>
-        <RedundantCastGivenDocblockType errorLevel="info" />
+        <DocblockTypeContradiction errorLevel="suppress" />
+        <RedundantConditionGivenDocblockType errorLevel="suppress" />
+        <RedundantCastGivenDocblockType errorLevel="suppress" />
+        <RedundantCast errorLevel="suppress" />
         <!-- We need redundancy for safety on PHP 5.6 -->
     </issueHandlers>
 </psalm>

@@ -156,18 +156,6 @@ class Wp implements DbInterface
     }
 
     /**
-     * Add a callback to handle AttestUpdate actions.
-     *
-     * @param callable $callback
-     * @return self
-     */
-    public function setAttestCallback($callback)
-    {
-        $this->attestCallback = $callback;
-        return $this;
-    }
-
-    /**
      * Perform an AttestUpdate action against this database.
      *
      * Does nothing unless setAttestCallback() has been called.
@@ -190,11 +178,20 @@ class Wp implements DbInterface
         array $meta = array(),
         $hash = ''
     ) {
-        if (is_callable($this->attestCallback)) {
-            $cb = $this->attestCallback;
-            return (bool) $cb($provider, $package, $release, $attestor, $attestation, $meta, $hash);
-        }
-        return false;
+        $attestorId = $this->getProviderId($attestor);
+        $releaseId = $this->getRelease($provider, $package, $release);
+        $inserted = $this->db->insert(
+            self::TABLE_ATTESTATIONS,
+            array(
+                'release_id' => $releaseId,
+                'attestor' => $attestorId,
+                'attestation' => $attestation,
+                'ledgerhash' => $hash,
+                'metadata' => json_encode($meta)
+            )
+        );
+        $updated = $this->updateMeta($hash);
+        return $inserted && $updated;
     }
 
     /**
@@ -463,12 +460,93 @@ class Wp implements DbInterface
     public function isKeyLimited($providerName, $publicKey)
     {
         $query = $this->db->prepare(
-            "SELECT pk.limited FROM gossamer_provider_publickeys pk " .
-            "JOIN gossamer_providers prov ON pk.provider = prov.id " .
+            "SELECT pk.limited FROM " . self::TABLE_PUBLIC_KEYS . " pk " .
+            "JOIN " . self::TABLE_PROVIDERS . " prov ON pk.provider = prov.id " .
             "WHERE prov.name = ? AND NOT pk.revoked AND pk.publickey = ?",
             $providerName,
             $publicKey
         );
         return (bool) $this->db->get_col($query);
+    }
+
+    /**
+     * @param string $providerName
+     * @param string $packageName
+     * @param string $version
+     * @param int $offset
+     * @return array
+     * @throws \TypeError
+     * @throws GossamerException
+     *
+     * @psalm-suppress UndefinedMethod
+     */
+    public function getRelease($providerName, $packageName, $version, $offset = 0)
+    {
+        $query = $this->db->prepare(
+            "SELECT r.*
+             FROM " . self::TABLE_PACKAGE_RELEASES . " r
+             JOIN " . self::TABLE_PACKAGES . " p ON r.package = p.id
+             JOIN " . self::TABLE_PROVIDERS ." v ON p.provider = v.id
+             WHERE v.name = ? AND p.name = ? AND r.version = ?
+             OFFSET $offset LIMIT 1",
+            array(
+                $providerName,
+                $packageName,
+                $version
+            )
+        );
+        $results = (array) $this->db->get_row($query, 'ARRAY_A');
+        if (empty($results)) {
+            throw new GossamerException("Version {$version} not found for package {$providerName}/{$packageName}");
+        }
+        if (!empty($results['metadata'])) {
+            /** @psalm-suppress MixedAssignment */
+            $results['metadata'] = json_decode((string) $results['metadata'], true);
+        }
+        return $results;
+    }
+
+
+    /**
+     * @param string $providerName
+     * @param string $packageName
+     * @param string $version
+     * @return array<array-key, array{attestor: string, attestation: string, ledgerhash: string}>
+     *
+     * @psalm-suppress UndefinedMethod
+     */
+    public function getAttestations($providerName, $packageName, $version)
+    {
+        $query = $this->db->prepare(
+            "SELECT r.id
+             FROM " . self::TABLE_PACKAGE_RELEASES . " r
+             JOIN " . self::TABLE_PACKAGES . " p ON r.package = p.id
+             JOIN " . self::TABLE_PROVIDERS ." v ON p.provider = v.id
+             WHERE v.name = ? AND p.name = ? AND r.version = ?",
+            array(
+                $providerName,
+                $packageName,
+                $version
+            )
+        );
+        /** @var int $releaseId */
+        $releaseId = (int) $this->db->get_col($query);
+        if (empty($releaseId)) {
+            throw new GossamerException('Release not found');
+        }
+        $query = $this->db->prepare(
+            "SELECT attestor, attestation, ledgerhash
+             FROM " . self::TABLE_ATTESTATIONS . "
+             WHERE release_id = ?",
+            array(
+                $releaseId
+            )
+        );
+        /** @var array<array-key, array{attestor: string, attestation: string, ledgerhash: string}> $results */
+        $results = (array) $this->db->get_results($query, 'ARRAY_A');
+        if (empty($results)) {
+            return array();
+        }
+        return $results;
     }
 }

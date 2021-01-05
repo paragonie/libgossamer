@@ -9,6 +9,7 @@ interface DbInterface
     const TABLE_PUBLIC_KEYS = 'gossamer_provider_publickeys';
     const TABLE_PACKAGES = 'gossamer_packages';
     const TABLE_PACKAGE_RELEASES = 'gossamer_package_releases';
+    const TABLE_ATTESTATIONS = 'gossamer_package_release_attestations';
 
     /**
      * @return string
@@ -150,4 +151,21 @@ interface DbInterface
      * @return bool
      */
     public function isKeyLimited($providerName, $publicKey);
+
+    /**
+     * @param string $providerName
+     * @param string $packageName
+     * @param string $version
+     * @param int $offset          For supporting multiple releases with the same name (if some were revoked)
+     * @return array
+     */
+    public function getRelease($providerName, $packageName, $version, $offset = 0);
+
+    /**
+     * @param string $providerName
+     * @param string $packageName
+     * @param string $version
+     * @return array{attestor: string, attestation: string, ledgerhash: string}[]
+     */
+    public function getAttestations($providerName, $packageName, $version);
 }
