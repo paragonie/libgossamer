@@ -25,20 +25,26 @@ class FederatedTrust implements TrustModeInterface
     /** @var string $url */
     private $url;
 
-    /** @var string $serverPublicKey */
-    private $serverPublicKey;
-
     /**
      * FederatedTrust constructor.
      *
+     * @param HttpInterface $http
      * @param string $url
-     * @param string $serverPublicKey
      */
-    public function __construct(HttpInterface $http, $url, $serverPublicKey)
+    public function __construct(HttpInterface $http, $url)
     {
         $this->http = $http;
         $this->url = $url;
-        $this->serverPublicKey = $serverPublicKey;
+    }
+
+    /**
+     * @param string $provider
+     * @return array<array-key, string>
+     * @throws GossamerException
+     */
+    public function getVerificationKeys($provider)
+    {
+        return $this->getVerificationKeysHttp($provider);
     }
 
     /**
@@ -61,6 +67,37 @@ class FederatedTrust implements TrustModeInterface
             (array) $data['metadata'],
             $this->getAttestationsHttp($provider, $package, $version)
         );
+    }
+
+    /**
+     * Get the update info from a Gossamer server.
+     *
+     * @param string $provider
+     * @return array<array-key, string>
+     * @throws GossamerException
+     */
+    protected function getVerificationKeysHttp($provider)
+    {
+        // Fetch the HTTP response.
+        /** @var array{body: string} $response */
+        $response = $this->http->get(
+            $this->url . '/verification-keys/' . $provider
+        );
+
+        // Decode the response body as a JSON object.
+        /** @var array<array-key, array{publickey: string, ledgerhash: string, metadata:array}> $decoded */
+        $decoded = json_decode($response['body'], true);
+        if (empty($decoded)) {
+            throw new GossamerException('No update file available');
+        }
+
+        // We only need the public key:
+        /** @var array<array-key, string> $verificationKeys */
+        $verificationKeys = array();
+        foreach ($decoded as $row) {
+            $verificationKeys[]= $row['publickey'];
+        }
+        return $verificationKeys;
     }
 
     /**

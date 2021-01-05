@@ -9,6 +9,12 @@ interface TrustModeInterface
 {
     /**
      * @param string $provider
+     * @return string[]
+     */
+    public function getVerificationKeys($provider);
+
+    /**
+     * @param string $provider
      * @param string $package
      * @param string $version
      * @return UpdateFile

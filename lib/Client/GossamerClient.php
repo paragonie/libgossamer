@@ -62,6 +62,15 @@ class GossamerClient
     }
 
     /**
+     * @param string $provider
+     * @return string[]
+     */
+    public function getVerificationKeys($provider)
+    {
+        return $this->trust->getVerificationKeys($provider);
+    }
+
+    /**
      * Gets information about a Gossamer update from the trusted source, depending
      * on your configured Trust Mode.
      *

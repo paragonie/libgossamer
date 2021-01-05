@@ -1,8 +1,14 @@
-# Client - TrustModeInterface
+# Libgossamer API Reference - Client - TrustMode - LocalTrust
 
-* **Fully Qualified Interface Name**: `ParagonIE\Gossamer\Client\TrustModeInterface`
+* **Fully Qualified Class Name**: `ParagonIE\Gossamer\Client\TrustMode\LocalTrust`
 
-## Interface Methods
+## Constructor
+
+**Arguments**:
+
+1. [DbInterface](../../DbInterface.md)
+
+## Class Methods
 
 ### `getUpdateInfo()`
 
