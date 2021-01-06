@@ -202,6 +202,8 @@ use ParagonIE\Gossamer\Client\TrustModeInterface;
 $gossamer = new GossamerClient($myTrustMode);
 ```
 
+### With an Attestation Policy
+
 If you also provided an attestation policy above, it gets passed as
 the second constructor argument.
 
@@ -220,6 +222,8 @@ $gossamer = new GossamerClient(
     $myAttestPolicy
 );
 ```
+
+### With a Specific Signature Algorithm
 
 If you're using a specific signature algorithm, pass the
 identifier as the third argument to the constructor:
@@ -242,7 +246,7 @@ $gossamer = new GossamerClient(
 );
 ```
 
-The signature algorithm **MUST** be hard-coded and not negoatiated
+The signature algorithm **MUST** be hard-coded and not negotiated
 at runtime.
 
 ## Step Four: Using the Client
