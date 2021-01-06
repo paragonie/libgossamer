@@ -21,3 +21,4 @@ Returns an array of strings.
 **Arguments**:
 
 1. `string` Provider name
+2. `?string` Purpose (or NULL)

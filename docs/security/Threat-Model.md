@@ -79,7 +79,11 @@ The following are **NOT** in the scope of Gossamer:
 * Maintaining a database of vulnerable versions of software to block installation
   * Instead, Gossamer provides a revocation mechanism
 * Preventing local attacks
+  * (e.g. tampering with the code after it's delivered)
 * Preventing insecure software from being written in the first place
+  * We do support [negative attestations](../specification/Protocol.md#negative-attestations)
+    so third parties can say "don't install this update" without the provider revoking it,
+    but that's a nice-to-have not a mainline goal of Gossamer.
 * Preventing datacenter attacks
 * AuthN/AuthZ of providers to the update server
   * Gossamer treats the update server as a black box
