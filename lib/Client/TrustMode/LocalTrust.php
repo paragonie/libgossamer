@@ -28,11 +28,12 @@ class LocalTrust implements TrustModeInterface
 
     /**
      * @param string $provider
+     * @param ?string $purpose
      * @return array<array-key, string>
      */
-    public function getVerificationKeys($provider)
+    public function getVerificationKeys($provider, $purpose = null)
     {
-        return $this->db->getPublicKeysForProvider($provider);
+        return $this->db->getPublicKeysForProvider($provider, null, $purpose);
     }
 
     /**

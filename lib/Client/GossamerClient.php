@@ -62,12 +62,18 @@ class GossamerClient
     }
 
     /**
-     * @param string $provider
+     * Get the verification keys for a given Provider.
+     *
+     * @param string $provider Provider name
+     * @param ?string $purpose Optional - Only get keys that match a purpose string (which is usually NULL).
+     *                         (This is only useful for building higher-level protocols atop Gossamer.)
+     *                         If left empty, it (by default) excludes all keys with a "purpose" set
+     *                         to some higher-level string.
      * @return string[]
      */
-    public function getVerificationKeys($provider)
+    public function getVerificationKeys($provider, $purpose = null)
     {
-        return $this->trust->getVerificationKeys($provider);
+        return $this->trust->getVerificationKeys($provider, $purpose);
     }
 
     /**

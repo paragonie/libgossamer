@@ -39,12 +39,13 @@ class FederatedTrust implements TrustModeInterface
 
     /**
      * @param string $provider
+     * @param ?string $purpose
      * @return array<array-key, string>
      * @throws GossamerException
      */
-    public function getVerificationKeys($provider)
+    public function getVerificationKeys($provider, $purpose = null)
     {
-        return $this->getVerificationKeysHttp($provider);
+        return $this->getVerificationKeysHttp($provider, $purpose);
     }
 
     /**
@@ -73,10 +74,11 @@ class FederatedTrust implements TrustModeInterface
      * Get the update info from a Gossamer server.
      *
      * @param string $provider
+     * @param ?string $purpose
      * @return array<array-key, string>
      * @throws GossamerException
      */
-    protected function getVerificationKeysHttp($provider)
+    protected function getVerificationKeysHttp($provider, $purpose = null)
     {
         // Fetch the HTTP response.
         /** @var array{body: string} $response */
@@ -85,7 +87,7 @@ class FederatedTrust implements TrustModeInterface
         );
 
         // Decode the response body as a JSON object.
-        /** @var array<array-key, array{publickey: string, ledgerhash: string, metadata:array}> $decoded */
+        /** @var array{publickey: string,  limited: bool, purpose: ?string, ledgerhash: string, metadata:array}[] $decoded */
         $decoded = json_decode($response['body'], true);
         if (empty($decoded)) {
             throw new GossamerException('No update file available');
@@ -95,7 +97,15 @@ class FederatedTrust implements TrustModeInterface
         /** @var array<array-key, string> $verificationKeys */
         $verificationKeys = array();
         foreach ($decoded as $row) {
-            $verificationKeys[]= $row['publickey'];
+            if (is_null($row['purpose']) && is_null($purpose)) {
+                // We want NULL purposes only (default behavior):
+                $verificationKeys[] = $row['publickey'];
+            } elseif (!is_null($row['purpose']) && !is_null($purpose)) {
+                // Both are non-NULL, so we must match in our inclusion filter:
+                if (hash_equals($row['purpose'], $purpose)) {
+                    $verificationKeys[] = $row['publickey'];
+                }
+            }
         }
         return $verificationKeys;
     }

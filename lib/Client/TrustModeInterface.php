@@ -9,9 +9,10 @@ interface TrustModeInterface
 {
     /**
      * @param string $provider
+     * @param ?string $purpose
      * @return string[]
      */
-    public function getVerificationKeys($provider);
+    public function getVerificationKeys($provider, $purpose = null);
 
     /**
      * @param string $provider

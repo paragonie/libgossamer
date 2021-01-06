@@ -14,6 +14,27 @@
 
 ## Class Methods
 
+### `getVerificationKeys()`
+
+Get the currently trusted verification keys for a given provider
+(and optional "purpose").
+
+The "purpose" flag is not used with Gossamer, but is included so that
+developers can include their own public keys for higher-level protocols
+that build atop Gossamer.
+
+Any keys with a "purpose" set will be excluded from this, unless that
+exact purpose string is provided as the optional second argument.
+
+**Arguments**:
+
+1. `string` Provider name
+2. `?string` Purpose (or NULL)
+
+Returns an array of strings representing the encoded
+verification keys for the given provider that are currently
+trusted by the entire network.
+
 ### `getUpdate()`
 
 Get an `UpdateFile` object that can be used to decide whether a file
