@@ -31,6 +31,9 @@ This will include two components:
 1. The library that implements the Gossamer specification.
 2. The [Gossamer Client](lib/Client).
 
+The next steps will depend entirely on what you want to do with Gossamer.
+Check out the [tutorials](docs/tutorials) directory for specific next steps.
+
 ## Other Repositories
 
 * [Gossamer Standalone Server](https://github.com/paragonie/gossamer-server)
