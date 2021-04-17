@@ -25,6 +25,7 @@
         <RedundantConditionGivenDocblockType errorLevel="suppress" />
         <RedundantCastGivenDocblockType errorLevel="suppress" />
         <RedundantCast errorLevel="suppress" />
+        <UnnecessaryVarAnnotation errorLevel="suppress" />
         <!-- We need redundancy for safety on PHP 5.6 -->
     </issueHandlers>
 </psalm>
