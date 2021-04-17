@@ -1,6 +1,6 @@
 # Libgossamer
 
-[![Build Status](https://travis-ci.org/paragonie/libgossamer.svg?branch=master)](https://travis-ci.org/paragonie/libgossamer)
+[![Build Status](https://github.com/paragonie/libgossamer/actions/workflows/ci.yml/badge.svg)](https://github.com/paragonie/libgossamer/actions)
 [![Latest Stable Version](https://poser.pugx.org/paragonie/libgossamer/v/stable)](https://packagist.org/packages/paragonie/libgossamer)
 [![Latest Unstable Version](https://poser.pugx.org/paragonie/libgossamer/v/unstable)](https://packagist.org/packages/paragonie/libgossamer)
 [![License](https://poser.pugx.org/paragonie/libgossamer/license)](https://packagist.org/packages/paragonie/libgossamer)

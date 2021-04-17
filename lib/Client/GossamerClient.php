@@ -53,6 +53,7 @@ class GossamerClient
         $this->assert(is_string($args[1]), 'Argument 2 must be a string');
         if (count($args) === 3) {
             $this->assert(is_string($args[2]), 'Argument 3 must be a string');
+            /** @psalm-suppress MixedArgument */
             return $this->getUpdateActual(...$args);
         } elseif (count($args) === 2) {
             $pieces = explode('/', $args[0]);

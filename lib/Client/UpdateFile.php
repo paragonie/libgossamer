@@ -139,7 +139,9 @@ class UpdateFile
 
             // Copy stream to temp file (via handler):
             $outFile = \fopen($tmpFile, 'rb');
-            \stream_copy_to_stream($outFile, $streamOrFilePath);
+            if (\is_bool(\stream_copy_to_stream($outFile, $streamOrFilePath))) {
+                throw new GossamerException('Could not copy to stream');
+            }
             \fclose($outFile);
 
             $valid = (new Verifier($this->algorithm))
