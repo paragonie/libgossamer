@@ -122,7 +122,7 @@ class Util
         for ($i = $size - 1; $i > 0; --$i) {
             $r = self::randomInt(0, $i);
             if ($r !== $i) {
-                /** @var array<array-key, mixed> $temp */
+                /** @var array $temp */
                 $temp = $array[$keys[$r]];
                 /** @var array<array-key, string|bool|int|float|array|object|null> $array */
                 $array[$keys[$r]] = $array[$keys[$i]];

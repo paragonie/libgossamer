@@ -74,7 +74,6 @@ class Common
         } elseif ($this->hashAlgorithm === 'blake2b') {
             $fp = fopen($filePath, 'rb');
             $stat = fstat($fp);
-            /** @var int $size */
             $size = (int) $stat['size'];
             $state = sodium_crypto_generichash_init();
             for ($i = 0; $i < $size; $i += 8192) {

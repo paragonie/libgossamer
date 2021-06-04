@@ -2,6 +2,7 @@
 namespace ParagonIE\Gossamer\Release;
 
 use ParagonIE\Gossamer\GossamerException;
+use SodiumException;
 
 /**
  * Class Signer
@@ -17,7 +18,7 @@ class Signer extends Common
      * @return string
      *
      * @throws GossamerException
-     * @throws \SodiumException
+     * @throws SodiumException
      */
     public function signFile($filePath, $secretKey)
     {

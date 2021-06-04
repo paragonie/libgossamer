@@ -7,7 +7,6 @@ use ParagonIE\Gossamer\LedgerInterface;
 use ParagonIE\Gossamer\LedgerVerifierInterface;
 use ParagonIE\Gossamer\Protocol\SignedMessage;
 use ParagonIE\Gossamer\Util;
-use ParagonIE\Gossamer\VerifierInterface;
 use SodiumException;
 
 /**

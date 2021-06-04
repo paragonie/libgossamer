@@ -99,4 +99,4 @@ jobs:
           memory_limit: 256M
 
       - name: Static Analysis
-        run: vendor/bin/psalm
+        run: vendor/bin/psalm --php-version=${{ matrix.php-versions }}
