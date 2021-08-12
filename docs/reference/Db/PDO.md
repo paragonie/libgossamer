@@ -1,4 +1,4 @@
-# Libgossamer API Reference - DB - PDO ([DbInterface](../DbInterface.md))
+# Libgossamer API Reference - DB - PDO ([DbInterface](../Interfaces/DbInterface.md))
 
 * **Fully Qualified Class Name**: `ParagonIE\Gossamer\Db\PDO`
 
@@ -10,6 +10,6 @@
 
 ## Methods
 
-See [DbInterface](../DbInterface.md) for definitions. This class just implements
+See [DbInterface](../Interfaces/DbInterface.md) for definitions. This class just implements
 the contract in `DbInterface`, using [EasyDB](https://github.com/paragonie/easydb)
 to ensure we're performing the actions securely.

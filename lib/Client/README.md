@@ -1,4 +1,4 @@
-# Gosasmer Client
+# Gossamer Client
 
 This is bundled with libgossamer for the time being. We may separate
 it into a different repository before tagging v1.0.0.

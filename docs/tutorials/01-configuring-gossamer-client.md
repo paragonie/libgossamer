@@ -47,7 +47,7 @@ the default setting.
 ### Local Trust
 
 You first need to instantiate the [LocalTrust](../reference/Client/TrustMode/LocalTrust.md) 
-class with a [database adapter](../reference/DbInterface.md) (e.g.
+class with a [database adapter](../reference/Interfaces/DbInterface.md) (e.g.
 [the PDO adapter](../reference/Db/PDO.md)).
 
 ```php
@@ -67,7 +67,7 @@ Once you have `$myTrustMode` populated, you'll want to move onto Step Two.
 ### Federated Trust
 
 You first need to instantiate the [FederatedTrust](../reference/Client/TrustMode/FederatedTrust.md)
-class with an [HTTP adapter](../reference/HttpInterface.md) (e.g.
+class with an [HTTP adapter](../reference/Interfaces/HttpInterface.md) (e.g.
 [the Guzzle adapter](../reference/Http/Guzzle.md)).
 
 You also need to know the URL of the server you're querying.

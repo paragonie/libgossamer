@@ -2,7 +2,7 @@
 namespace ParagonIE\Gossamer\Tests\Dummy;
 
 use ParagonIE\Gossamer\Response;
-use ParagonIE\Gossamer\SourceInterface;
+use ParagonIE\Gossamer\Interfaces\SourceInterface;
 
 /**
  * Class DummySource

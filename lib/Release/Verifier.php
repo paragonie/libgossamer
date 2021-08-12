@@ -3,7 +3,7 @@ namespace ParagonIE\Gossamer\Release;
 
 use ParagonIE\Gossamer\GossamerException;
 use ParagonIE\Gossamer\Util;
-use ParagonIE\Gossamer\VerifierInterface;
+use ParagonIE\Gossamer\Interfaces\VerifierInterface;
 use SodiumException;
 
 /**

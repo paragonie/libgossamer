@@ -88,7 +88,7 @@ This method returns an instance of an `Action` from a given `Message` object.
 
 **Arguments**:
 
-  1. [`DbInterface`](../DbInterface.md) - Database
+  1. [`DbInterface`](../Interfaces/DbInterface.md) - Database
 
 **Returns** a `bool`.
 

@@ -1,4 +1,4 @@
-# Libgossamer API Reference - Release - Verifier extends [Common](Common.md) ([VerifierInterface](../VerifierInterface.md))
+# Libgossamer API Reference - Release - Verifier extends [Common](Common.md) ([VerifierInterface](../Interfaces/VerifierInterface.md))
 
 * **Fully Qualified Class Name**: `ParagonIE\Gossamer\Release\Verifier`
 

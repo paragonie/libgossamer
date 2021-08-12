@@ -1,6 +1,6 @@
 # Libgossamer API Reference - HttpInterface
 
-* **Fully Qualified Interface Name**: `ParagonIE\Gossamer\HttpInterface`
+* **Fully Qualified Interface Name**: `ParagonIE\Gossamer\Interfaces\HttpInterface`
 
 ## Interface Methods
 

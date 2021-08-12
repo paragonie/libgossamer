@@ -1,7 +1,7 @@
 <?php
 namespace ParagonIE\Gossamer\Release;
 
-use ParagonIE\Gossamer\CryptoBackendInterface;
+use ParagonIE\Gossamer\Interfaces\CryptoBackendInterface;
 use ParagonIE\Gossamer\CryptoBackends\SodiumBackend;
 use ParagonIE\Gossamer\GossamerException;
 use SodiumException;

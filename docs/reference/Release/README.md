@@ -8,6 +8,6 @@ version releases for packages.
 * [Backends](../CryptoBackends)
     * [SodiumBackend](../CryptoBackends/SodiumBackend.md)
 * [Common](Common.md)
-* [CryptoBakendInterface](../CryptoBackendInterface.md)
+* [CryptoBakendInterface](../Interfaces/CryptoBackendInterface.md)
 * [Signer](Signer.md)
 * [Verifier](Verifier.md)

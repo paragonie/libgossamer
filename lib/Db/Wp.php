@@ -2,7 +2,7 @@
 namespace ParagonIE\Gossamer\Db;
 
 use wpdb;
-use ParagonIE\Gossamer\DbInterface;
+use ParagonIE\Gossamer\Interfaces\DbInterface;
 use ParagonIE\Gossamer\GossamerException;
 
 /**

@@ -1,6 +1,6 @@
 # Libgossamer API Reference - LedgerInterface
 
-* **Fully Qualified Interface Name**: `ParagonIE\Gossamer\LedgerInterface`
+* **Fully Qualified Interface Name**: `ParagonIE\Gossamer\Interfaces\LedgerInterface`
 
 ## Interface Methods
 

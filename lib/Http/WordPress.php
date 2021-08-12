@@ -4,7 +4,7 @@ namespace ParagonIE\Gossamer\Http;
 use ParagonIE\Certainty\Exception\CertaintyException;
 use ParagonIE\Certainty\RemoteFetch;
 use ParagonIE\Gossamer\HttpException;
-use ParagonIE\Gossamer\HttpInterface;
+use ParagonIE\Gossamer\Interfaces\HttpInterface;
 use WP_Http;
 use WP_Error;
 use SodiumException;

@@ -1,6 +1,6 @@
 # Libgossamer API Reference - VerifierInterface
 
-* **Fully Qualified Interface Name**: `ParagonIE\Gossamer\VerifierInterface`
+* **Fully Qualified Interface Name**: `ParagonIE\Gossamer\Interfaces\VerifierInterface`
 
 ## Interface Methods
 

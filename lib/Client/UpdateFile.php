@@ -5,6 +5,7 @@ use ParagonIE\Gossamer\GossamerException;
 use ParagonIE\Gossamer\Release\Common;
 use ParagonIE\Gossamer\Release\Verifier;
 use Psr\Http\Message\StreamInterface;
+use SodiumException;
 
 /**
  * Class UpdateFile
@@ -112,7 +113,7 @@ class UpdateFile
      * @param string|resource|StreamInterface $streamOrFilePath
      * @return bool
      * @throws GossamerException
-     * @throws \SodiumException
+     * @throws SodiumException
      */
     public function isSignatureValid($streamOrFilePath)
     {

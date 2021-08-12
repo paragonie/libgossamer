@@ -1,4 +1,4 @@
-# Libgossamer API Reference - Verifier - Chronicle ([LedgerInterface](../LedgerInterface.md), [VerifierInterface](../VerifierInterface.md))
+# Libgossamer API Reference - Verifier - Chronicle ([LedgerInterface](../Interfaces/LedgerInterface.md), [VerifierInterface](../Interfaces/VerifierInterface.md))
 
 * **Fully Qualified Class Name**: `ParagonIE\Gossamer\Verifier\Chronicle`
 
@@ -13,7 +13,7 @@
 
 **Arguments**:
 
-1. [`HttpInterface`](../HttpInterface.md)
+1. [`HttpInterface`](../Interfaces/HttpInterface.md)
 
 ## Methods
 

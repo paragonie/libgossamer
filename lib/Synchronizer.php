@@ -1,6 +1,10 @@
 <?php
 namespace ParagonIE\Gossamer;
 
+use ParagonIE\Gossamer\Interfaces\DbInterface;
+use ParagonIE\Gossamer\Interfaces\HttpInterface;
+use ParagonIE\Gossamer\Interfaces\LedgerVerifierInterface;
+use ParagonIE\Gossamer\Interfaces\SourceInterface;
 use ParagonIE\Gossamer\Protocol\Action;
 use ParagonIE\Gossamer\Protocol\SignedMessage;
 use ParagonIE\Gossamer\Source\Chronicle as ChronicleSource;

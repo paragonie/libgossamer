@@ -1,4 +1,4 @@
-# Libgossamer API Reference - HTTP - Guzzle ([HttpInterface](../HttpInterface.md))
+# Libgossamer API Reference - HTTP - Guzzle ([HttpInterface](../Interfaces/HttpInterface.md))
 
 * **Fully Qualified Class Name**: `ParagonIE\Gossamer\Http\Guzzle`
 
@@ -10,6 +10,6 @@
 
 ## Methods
 
-See [HttpInterface](../HttpInterface.md) for definitions. This class just implements
+See [HttpInterface](../Interfaces/HttpInterface.md) for definitions. This class just implements
 the contract in `HttpInterface`, using [Guzzle](http://docs.guzzlephp.org/en/stable)
 with [Certainty](https://github.com/paragonie/certainty/blob/master/docs/README.md).

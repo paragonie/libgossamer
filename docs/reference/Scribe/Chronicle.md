@@ -1,4 +1,4 @@
-# Libgossamer API Reference - Scribe - Chronicle ([ScribeInterface](../ScribeInterface.md))
+# Libgossamer API Reference - Scribe - Chronicle ([ScribeInterface](../Interfaces/ScribeInterface.md))
 
 * **Fully Qualified Class Name**: `ParagonIE\Gossamer\Scribe\Chronicle`
 
@@ -13,7 +13,7 @@
 
 **Arguments**:
 
-1. [`HttpInterface`](../HttpInterface.md)
+1. [`HttpInterface`](../Interfaces/HttpInterface.md)
 2. `string` - Base URL
 3. `string` - Client ID
 4. `string` - Client Secret Key (for signing messages)
