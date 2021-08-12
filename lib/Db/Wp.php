@@ -163,6 +163,7 @@ class Wp implements DbInterface
      * @param string $provider
      * @param string $package
      * @param string $release
+     * @param ?string $artifact
      * @param string $attestor
      * @param string $attestation
      * @param array $meta
@@ -173,23 +174,25 @@ class Wp implements DbInterface
         $provider,
         $package,
         $release,
+        $artifact,
         $attestor,
         $attestation,
         array $meta = array(),
         $hash = ''
     ) {
         $attestorId = $this->getProviderId($attestor);
-        $releaseId = $this->getRelease($provider, $package, $release);
-        $inserted = $this->db->insert(
-            self::TABLE_ATTESTATIONS,
-            array(
-                'release_id' => $releaseId,
-                'attestor' => $attestorId,
-                'attestation' => $attestation,
-                'ledgerhash' => $hash,
-                'metadata' => json_encode($meta)
-            )
+        $releaseId = $this->getRelease($provider, $package, $release, $artifact);
+        $inserts = array(
+            'release_id' => $releaseId,
+            'attestor' => $attestorId,
+            'attestation' => $attestation,
+            'ledgerhash' => $hash,
+            'metadata' => json_encode($meta)
         );
+        if (!is_null($artifact)) {
+            $inserts['artifact'] = $artifact;
+        }
+        $inserted = $this->db->insert(self::TABLE_ATTESTATIONS, $inserts);
         $updated = $this->updateMeta($hash);
         return $inserted && $updated;
     }
@@ -201,6 +204,7 @@ class Wp implements DbInterface
      * @param string $package
      * @param string $publicKey
      * @param string $release
+     * @param ?string $artifact
      * @param string $signature
      * @param array $meta
      * @param string $hash
@@ -212,6 +216,7 @@ class Wp implements DbInterface
         $package,
         $publicKey,
         $release,
+        $artifact,
         $signature,
         array $meta = array(),
         $hash = ''
@@ -229,6 +234,9 @@ class Wp implements DbInterface
             'metadata' => json_encode($meta)
         );
 
+        if (!is_null($artifact)) {
+            $inserts['artifact'] = $artifact;
+        }
         if (!empty($hash)) {
             $inserts['ledgerhash'] = $hash;
         }
@@ -246,6 +254,7 @@ class Wp implements DbInterface
      * @param string $package
      * @param string $publicKey
      * @param string $release
+     * @param ?string $artifact
      * @param array $meta
      * @param string $hash
      * @return bool
@@ -256,6 +265,7 @@ class Wp implements DbInterface
         $package,
         $publicKey,
         $release,
+        $artifact = null,
         array $meta = array(),
         $hash = ''
     ) {
@@ -473,6 +483,7 @@ class Wp implements DbInterface
      * @param string $providerName
      * @param string $packageName
      * @param string $version
+     * @param ?string $artifact
      * @param int $offset
      * @return array
      * @throws \TypeError
@@ -480,7 +491,7 @@ class Wp implements DbInterface
      *
      * @psalm-suppress UndefinedMethod
      */
-    public function getRelease($providerName, $packageName, $version, $offset = 0)
+    public function getRelease($providerName, $packageName, $version, $artifact = null, $offset = 0)
     {
         $query = $this->db->prepare(
             "SELECT r.*
@@ -511,25 +522,29 @@ class Wp implements DbInterface
      * @param string $providerName
      * @param string $packageName
      * @param string $version
+     * @param ?string $artifact
      * @return array<array-key, array{attestor: string, attestation: string, ledgerhash: string}>
      *
      * @psalm-suppress UndefinedMethod
      */
-    public function getAttestations($providerName, $packageName, $version)
+    public function getAttestations($providerName, $packageName, $version, $artifact = null)
     {
-        $query = $this->db->prepare(
+        $queryString =
             "SELECT r.id
              FROM " . self::TABLE_PACKAGE_RELEASES . " r
              JOIN " . self::TABLE_PACKAGES . " p ON r.package = p.id
              JOIN " . self::TABLE_PROVIDERS ." v ON p.provider = v.id
-             WHERE v.name = ? AND p.name = ? AND r.version = ?",
-            array(
-                $providerName,
-                $packageName,
-                $version
-            )
+             WHERE v.name = ? AND p.name = ? AND r.version = ?";
+        $queryParams = array(
+            $providerName,
+            $packageName,
+            $version
         );
-        /** @var int $releaseId */
+        if (!is_null($artifact)) {
+            $queryString .= ' AND r.artifact = ?';
+            $queryParams []= $artifact;
+        }
+        $query = $this->db->prepare($queryString, $queryParams);
         $releaseId = (int) $this->db->get_col($query);
         if (empty($releaseId)) {
             throw new GossamerException('Release not found');

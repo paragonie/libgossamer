@@ -74,9 +74,10 @@ Appends signature/etc. information about a software update.
 2. `string` - Package
 3. `string` - Public Key
 4. `string` - Release (version)
-5. `string` - Signature (of the release file)
-6. `array` - Metadata
-7. `string` - Hash
+5. `?string` - Artifact
+6. `string` - Signature (of the release file)
+7. `array` - Metadata
+8. `string` - Hash
 
 **Returns** a `bool`.
 
@@ -90,8 +91,9 @@ Revoke an existing update.
 2. `string` - Package
 3. `string` - Public Key
 4. `string` - Release (version)
-5. `array` - Metadata
-6. `string` - Hash
+5. `?string` - Artifact
+6. `array` - Metadata
+7. `string` - Hash
 
 **Returns** a `bool`.
 
