@@ -19,6 +19,9 @@ class Action
     const VERB_REVOKE_UPDATE = 'RevokeUpdate';
     const VERB_ATTEST_UPDATE = 'AttestUpdate';
 
+    /** @var ?string $artifact */
+    private $artifact = null;
+
     /** @var string $attestation */
     private $attestation = '';
 
@@ -98,6 +101,9 @@ class Action
                 $action->targetProvider = (string) $json['provider'];
                 $action->package = (string) $json['package'];
                 $action->release = (string) $json['release'];
+                $action->artifact = isset($json['artifact'])
+                    ? (string) $json['artifact']
+                    : null;
                 break;
             case self::VERB_APPEND_UPDATE:
             case self::VERB_REVOKE_UPDATE:
@@ -109,6 +115,9 @@ class Action
                 }
                 $action->package = (string) $json['package'];
                 $action->release = (string) $json['release'];
+                $action->artifact = isset($json['artifact'])
+                    ? (string) $json['artifact']
+                    : null;
                 break;
         }
         if (!empty($json['meta'])) {
@@ -142,6 +151,9 @@ class Action
     public function toJsonString()
     {
         $array = array('verb' => $this->verb);
+        if (!is_null($this->artifact)) {
+            $array['artifact'] = $this->artifact;
+        }
         if (!empty($this->limited)) {
             $array['limited'] = true;
         }
@@ -154,6 +166,9 @@ class Action
         if ($this->verb === self::VERB_ATTEST_UPDATE) {
             if (!empty($this->provider)) {
                 $array['attestor'] = $this->provider;
+            }
+            if (!empty($this->attestation)) {
+                $array['attestation'] = $this->attestation;
             }
             if (!empty($this->targetProvider)) {
                 $array['provider'] = $this->targetProvider;
@@ -190,6 +205,14 @@ class Action
             $signingKey,
             $backend
         );
+    }
+
+    /**
+     * @return ?string
+     */
+    public function getArtifact()
+    {
+        return $this->artifact;
     }
 
     /**
@@ -317,6 +340,7 @@ class Action
                     $this->package,
                     $this->publicKey,
                     $this->release,
+                    $this->artifact,
                     $this->signature,
                     $this->meta,
                     $this->hash
@@ -327,6 +351,7 @@ class Action
                     $this->package,
                     $this->publicKey,
                     $this->release,
+                    $this->artifact,
                     $this->meta,
                     $this->hash
                 );
@@ -335,6 +360,7 @@ class Action
                     $this->targetProvider,
                     $this->package,
                     $this->release,
+                    $this->artifact,
                     $this->provider,
                     $this->attestation,
                     $this->meta,

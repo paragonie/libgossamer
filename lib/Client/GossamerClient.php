@@ -86,11 +86,12 @@ class GossamerClient
      * @param string $provider
      * @param string $package
      * @param string $version
+     * @param ?string $artifact
      * @return UpdateFile
      */
-    private function getUpdateActual($provider, $package, $version)
+    private function getUpdateActual($provider, $package, $version, $artifact = null)
     {
-        return $this->trust->getUpdateInfo($provider, $package, $version)
+        return $this->trust->getUpdateInfo($provider, $package, $version, $artifact)
                 ->setAlgorithm($this->alg)
                 ->setAttestPolicy($this->policy);
     }

@@ -54,13 +54,14 @@ class FederatedTrust implements TrustModeInterface
      * @param string $provider
      * @param string $package
      * @param string $version
+     * @param ?string $artifact
      * @return UpdateFile
      * @throws GossamerException
      */
-    public function getUpdateInfo($provider, $package, $version)
+    public function getUpdateInfo($provider, $package, $version, $artifact = null)
     {
         /** @var array{publickey: string, signature: string, metadata:array} $data */
-        $data = $this->getUpdateInfoHttp($provider, $package, $version);
+        $data = $this->getUpdateInfoHttp($provider, $package, $version, $artifact);
         // Return an object that encapsulates this state.
         return new UpdateFile(
             (string) $data['publickey'],
@@ -87,7 +88,7 @@ class FederatedTrust implements TrustModeInterface
         );
 
         // Decode the response body as a JSON object.
-        /** @var array{publickey: string,  limited: bool, purpose: ?string, ledgerhash: string, metadata:array}[] $decoded */
+        /** @var array{publickey: string, limited: bool, purpose: ?string, ledgerhash: string, metadata:array}[] $decoded */
         $decoded = json_decode($response['body'], true);
         if (empty($decoded)) {
             throw new GossamerException('No update file available');
@@ -116,10 +117,11 @@ class FederatedTrust implements TrustModeInterface
      * @param string $provider
      * @param string $package
      * @param string $version
+     * @param ?string $artifact
      * @return array{publickey: string, signature: string, metadata:array}
      * @throws GossamerException
      */
-    protected function getUpdateInfoHttp($provider, $package, $version)
+    protected function getUpdateInfoHttp($provider, $package, $version, $artifact = null)
     {
         // Fetch the HTTP response.
         /** @var array{body: string} $response */
@@ -128,8 +130,16 @@ class FederatedTrust implements TrustModeInterface
         );
 
         // Decode the response body as a JSON object.
-        /** @var array<array-key, array{publickey: string, signature: string, metadata:array}> $decoded */
+        /** @var array<array-key, array{artifact: string, publickey: string, signature: string, metadata:array}> $decoded */
         $decoded = json_decode($response['body'], true);
+        // If we have an artifact type, filter only the updates
+        if (!is_null($artifact) && !empty($decoded)) {
+            foreach ($decoded as $key => $row) {
+                if ($row['artifact'] !== $artifact) {
+                    unset($decoded[$key]);
+                }
+            }
+        }
         if (empty($decoded)) {
             throw new GossamerException('No update file available');
         }
@@ -143,9 +153,10 @@ class FederatedTrust implements TrustModeInterface
      * @param string $provider
      * @param string $package
      * @param string $version
+     * @param ?string $artifact
      * @return array{attestor: string, attestation: string, ledgerhash: string}[]
      */
-    protected function getAttestationsHttp($provider, $package, $version)
+    protected function getAttestationsHttp($provider, $package, $version, $artifact = null)
     {
         /** @var array{body: string} $response */
         $response = $this->http->get(
@@ -154,9 +165,17 @@ class FederatedTrust implements TrustModeInterface
 
         // Decode the response body as a JSON object.
         /**
-         * @var array{attestor: string, attestation: string, ledgerhash: string}[] $decoded
+         * @var array{artifact: string, attestor: string, attestation: string, ledgerhash: string}[] $decoded
          */
         $decoded = json_decode($response['body'], true);
+        // If we have an artifact type, filter only the updates
+        if (!is_null($artifact) && !empty($decoded)) {
+            foreach ($decoded as $key => $row) {
+                if ($row['artifact'] !== $artifact) {
+                    unset($decoded[$key]);
+                }
+            }
+        }
         if (empty($decoded)) {
             return array();
         }

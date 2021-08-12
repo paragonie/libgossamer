@@ -54,6 +54,7 @@ interface DbInterface
      * @param string $package
      * @param string $publicKey
      * @param string $release
+     * @param ?string $artifact
      * @param string $signature
      * @param array $meta
      * @param string $hash
@@ -64,6 +65,7 @@ interface DbInterface
         $package,
         $publicKey,
         $release,
+        $artifact,
         $signature,
         array $meta = array(),
         $hash = ''
@@ -73,6 +75,7 @@ interface DbInterface
      * @param string $provider
      * @param string $package
      * @param string $release
+     * @param ?string $artifact
      * @param string $attestor
      * @param string $attestation
      * @param array $meta
@@ -83,6 +86,7 @@ interface DbInterface
         $provider,
         $package,
         $release,
+        $artifact,
         $attestor,
         $attestation,
         array $meta = array(),
@@ -94,6 +98,7 @@ interface DbInterface
      * @param string $package
      * @param string $publicKey
      * @param string $release
+     * @param ?string $artifact
      * @param array $meta
      * @param string $hash
      * @return bool
@@ -103,6 +108,7 @@ interface DbInterface
         $package,
         $publicKey,
         $release,
+        $artifact = null,
         array $meta = array(),
         $hash = ''
     );
@@ -156,16 +162,18 @@ interface DbInterface
      * @param string $providerName
      * @param string $packageName
      * @param string $version
+     * @param ?string $artifact
      * @param int $offset          For supporting multiple releases with the same name (if some were revoked)
      * @return array
      */
-    public function getRelease($providerName, $packageName, $version, $offset = 0);
+    public function getRelease($providerName, $packageName, $version, $artifact = null, $offset = 0);
 
     /**
      * @param string $providerName
      * @param string $packageName
      * @param string $version
+     * @param ?string $artifact
      * @return array{attestor: string, attestation: string, ledgerhash: string}[]
      */
-    public function getAttestations($providerName, $packageName, $version);
+    public function getAttestations($providerName, $packageName, $version, $artifact = null);
 }

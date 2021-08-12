@@ -93,7 +93,7 @@ class ActionTest extends TestCase
 
         $providerId = $this->db->getProviderId(self::DUMMY_USERNAME);
         $packageId = $this->db->getPackageId('wordpress/core', $providerId);
-        $update99 = $this->db->hashIndex(DummyDB::TABLE_PACKAGE_RELEASES, $packageId . '@@9.99.99');
+        $update99 = $this->db->hashIndex(DummyDB::TABLE_PACKAGE_RELEASES, $packageId . '@@9.99.99@@');
 
         $this->assertFalse(
             $state[DummyDB::TABLE_PACKAGE_RELEASES][$update99]['revoked']

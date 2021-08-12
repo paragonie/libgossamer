@@ -41,6 +41,7 @@ CREATE TABLE gossamer_package_releases (
     package BIGINT REFERENCES gossamer_packages (id),
     publickey BIGINT REFERENCES gossamer_provider_publickeys (id),
     version TEXT,
+    artifact TEXT NULL,
     signature TEXT,
     ledgerhash TEXT,
     revokehash TEXT NULL,
@@ -49,7 +50,7 @@ CREATE TABLE gossamer_package_releases (
     PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX gossamer_release_version_index
-    ON gossamer_package_releases (package, publickey, version);
+    ON gossamer_package_releases (package, publickey, version, artifact);
 
 -- Gossamer metadata table
 CREATE TABLE gossamer_meta (

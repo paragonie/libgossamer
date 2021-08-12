@@ -162,6 +162,7 @@ class PDO implements DbInterface
      * @param string $provider
      * @param string $package
      * @param string $release
+     * @param ?string $artifact
      * @param string $attestor
      * @param string $attestation
      * @param array $meta
@@ -172,6 +173,7 @@ class PDO implements DbInterface
         $provider,
         $package,
         $release,
+        $artifact,
         $attestor,
         $attestation,
         array $meta = array(),
@@ -179,7 +181,7 @@ class PDO implements DbInterface
     ) {
         $this->db->beginTransaction();
         $attestorId = $this->getProviderId($attestor);
-        $releaseId = $this->getRelease($provider, $package, $release);
+        $releaseId = $this->getRelease($provider, $package, $release, $artifact);
         /** @var array<string, scalar> $inserts */
         $inserts = array(
             'release_id' => $releaseId,
@@ -201,6 +203,7 @@ class PDO implements DbInterface
      * @param string $package
      * @param string $publicKey
      * @param string $release
+     * @param ?string $artifact
      * @param string $signature
      * @param array $meta
      * @param string $hash
@@ -212,6 +215,7 @@ class PDO implements DbInterface
         $package,
         $publicKey,
         $release,
+        $artifact,
         $signature,
         array $meta = array(),
         $hash = ''
@@ -223,6 +227,7 @@ class PDO implements DbInterface
         $inserts = [
             'package' => $packageId,
             'version' => $release,
+            'artifact' => $artifact,
             'publickey' => $publicKeyId,
             'signature' => $signature,
             'metadata' => json_encode($meta)
@@ -247,6 +252,7 @@ class PDO implements DbInterface
      * @param string $package
      * @param string $publicKey
      * @param string $release
+     * @param ?string $artifact
      * @param array $meta
      * @param string $hash
      * @return bool
@@ -257,6 +263,7 @@ class PDO implements DbInterface
         $package,
         $publicKey,
         $release,
+        $artifact = null,
         array $meta = array(),
         $hash = ''
     ) {
@@ -267,15 +274,19 @@ class PDO implements DbInterface
         if (!empty($hash)) {
             $updates['revokehash'] = $hash;
         }
+        $clause = [
+            'version' => $release,
+            'package' => $packageId
+        ];
+        if (!is_null($artifact)) {
+            $clause['artifact'] = $artifact;
+        }
 
         $this->db->beginTransaction();
         $this->db->update(
             self::TABLE_PACKAGE_RELEASES,
             $updates,
-            [
-                'version' => $release,
-                'package' => $packageId
-            ]
+            $clause
         );
         $this->updateMeta($hash);
         return $this->db->commit();
@@ -460,28 +471,35 @@ class PDO implements DbInterface
      * @param string $providerName
      * @param string $packageName
      * @param string $version
+     * @param ?string $artifact
      * @param int $offset
      * @return array
      * @throws \TypeError
      * @throws GossamerException
      */
-    public function getRelease($providerName, $packageName, $version, $offset = 0)
+    public function getRelease($providerName, $packageName, $version, $artifact = null, $offset = 0)
     {
         if (!is_int($offset)) {
             throw new \TypeError('Offset must be an integer');
         }
-        /** @var array<string, int|string|bool|array|null> $results */
-        $results = $this->db->row(
-            "SELECT r.*
+        $queryString = "SELECT r.*
              FROM " . self::TABLE_PACKAGE_RELEASES . " r
              JOIN " . self::TABLE_PACKAGES . " p ON r.package = p.id
              JOIN " . self::TABLE_PROVIDERS ." v ON p.provider = v.id
              WHERE v.name = ? AND p.name = ? AND r.version = ?
-             OFFSET $offset LIMIT 1",
+             OFFSET $offset LIMIT 1";
+        $queryParams = array(
             $providerName,
             $packageName,
             $version
         );
+        if (!is_null($artifact)) {
+            $queryString .= " AND r.artifact = ?";
+            $queryParams []= $artifact;
+        }
+
+        /** @var array<string, int|string|bool|array|null> $results */
+        $results = $this->db->row($queryString, ...$queryParams);
         if (empty($results)) {
             throw new GossamerException("Version {$version} not found for package {$providerName}/{$packageName}");
         }
@@ -495,21 +513,27 @@ class PDO implements DbInterface
      * @param string $providerName
      * @param string $packageName
      * @param string $version
+     * @param ?string $artifact
      * @return array<array-key, array{attestor: string, attestation: string, ledgerhash: string}>
      */
-    public function getAttestations($providerName, $packageName, $version)
+    public function getAttestations($providerName, $packageName, $version, $artifact = null)
     {
-        /** @var int $releaseId */
-        $releaseId = $this->db->cell(
-            "SELECT r.id
+        $queryString = "SELECT r.id
              FROM " . self::TABLE_PACKAGE_RELEASES . " r
              JOIN " . self::TABLE_PACKAGES . " p ON r.package = p.id
              JOIN " . self::TABLE_PROVIDERS ." v ON p.provider = v.id
-             WHERE v.name = ? AND p.name = ? AND r.version = ? AND NOT r.revoked",
+             WHERE v.name = ? AND p.name = ? AND r.version = ? AND NOT r.revoked";
+        $queryParams = array(
             $providerName,
             $packageName,
             $version
         );
+        if (!is_null($artifact)) {
+            $queryString .= " AND r.artifact = ?";
+            $queryParams []= $artifact;
+        }
+        /** @var int $releaseId */
+        $releaseId = $this->db->cell($queryString, ...$queryParams);
         if (empty($releaseId)) {
             throw new GossamerException('Release not found');
         }

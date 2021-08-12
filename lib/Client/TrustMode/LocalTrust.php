@@ -40,15 +40,16 @@ class LocalTrust implements TrustModeInterface
      * @param string $provider
      * @param string $package
      * @param string $version
+     * @param ?string $artifact
      * @return UpdateFile
      */
-    public function getUpdateInfo($provider, $package, $version)
+    public function getUpdateInfo($provider, $package, $version, $artifact = null)
     {
         /** @var array{publickey: string, signature: string, metadata: array} $data */
-        $data = $this->db->getRelease($provider, $package, $version);
+        $data = $this->db->getRelease($provider, $package, $version, $artifact);
 
         /** @var array{attestor: string, attestation: string, ledgerhash: string}[] $attestations */
-        $attestations = $this->db->getAttestations($provider, $package, $version);
+        $attestations = $this->db->getAttestations($provider, $package, $version, $artifact);
 
         return new UpdateFile(
             (string) $data['publickey'],

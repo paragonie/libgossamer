@@ -159,6 +159,7 @@ An `AppendUpdate` action **MUST** contain the following fields:
 | `signature`  | Signature of the update file.            |
 | `package`    | Name of the package (owned by provider). |
 | `release`    | Version being released.                  |
+| `artifact`   | Build artifact type being released.      |
 
 An `AppendUpdate` action **MAY ALSO** Contain the following optional fields:
 
@@ -175,6 +176,9 @@ correct provider (or the Super Provider, if applicable).
 
 When this action is performed, it should insert a new row in a database.
 
+The `artifact` is optional. It can be used to distinguish different deliverables for different
+platforms or distribution channels (e.g. for `.zip` files vs `.patch` files).
+
 ### RevokeUpdate
 
 A `RevokeUpdate` action **MUST** contain the following fields:
@@ -186,6 +190,7 @@ A `RevokeUpdate` action **MUST** contain the following fields:
 | `public-key` | Base64url-encoded verification key.      |
 | `package`    | Name of the package (owned by provider). |
 | `release`    | Version being released.                  |
+| `artifact`   | Which build artifact type to revoke.     |
 
 If the `provider` is not found in the local key store when an `RevokeUpdate`
 action is encountered, an error **MUST** be raised. In most languages, this
@@ -207,6 +212,7 @@ A `AttestUpdate` action **MUST** contain the following fields:
 | `provider`    | Provider name.                           |
 | `package`     | Name of the package (owned by provider). |
 | `release`     | Version of the package in question.      |
+| `artifact`    | Which build artifact type to attest.     |
 | `attestor`    | Provider attesting this package.         |
 | `attestation` | See below.                               |
 

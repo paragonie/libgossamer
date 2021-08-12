@@ -132,6 +132,7 @@ class DummyDB implements DbInterface
      * @param string $provider
      * @param string $package
      * @param string $release
+     * @param ?string $artifact
      * @param string $attestor
      * @param string $attestation
      * @param array $meta
@@ -143,6 +144,7 @@ class DummyDB implements DbInterface
         $provider,
         $package,
         $release,
+        $artifact,
         $attestor,
         $attestation,
         array $meta = array(),
@@ -154,8 +156,13 @@ class DummyDB implements DbInterface
         if (empty($releaseData)) {
             return false;
         }
-        $releaseIndex = $this->hashIndex(self::TABLE_PACKAGE_RELEASES, $packageId . '@@' . $release);
-        $index = $this->hashIndex(self::TABLE_ATTESTATIONS, $packageId . '@@' . $release . '@@' . $attestor);
+        if (!is_null($artifact)) {
+            $suffix =  '@@' . $artifact;
+        } else {
+            $suffix = '@@';
+        }
+        $releaseIndex = $this->hashIndex(self::TABLE_PACKAGE_RELEASES, $packageId . '@@' . $release . $suffix);
+        $index = $this->hashIndex(self::TABLE_ATTESTATIONS, $packageId . '@@' . $release . $suffix . '@@' . $attestor);
         if (!isset($this->state[self::TABLE_ATTESTATIONS][$releaseIndex])) {
             $this->state[self::TABLE_ATTESTATIONS][$releaseIndex] = [];
         }
@@ -178,6 +185,7 @@ class DummyDB implements DbInterface
      * @param string $package
      * @param string $publicKey
      * @param string $release
+     * @param ?string $artifact
      * @param string $signature
      * @param array $meta
      * @param string $hash
@@ -190,6 +198,7 @@ class DummyDB implements DbInterface
         $package,
         $publicKey,
         $release,
+        $artifact,
         $signature,
         array $meta = array(),
         $hash = ''
@@ -198,12 +207,18 @@ class DummyDB implements DbInterface
         $publicKeyId = $this->getPublicKeyId($publicKey, $providerId);
         $packageId = $this->getPackageId($package, $providerId);
 
-        $index = $this->hashIndex(self::TABLE_PACKAGE_RELEASES, $packageId . '@@' . $release);
+        if (!is_null($artifact)) {
+            $suffix =  '@@' . $artifact;
+        } else {
+            $suffix = '@@';
+        }
+        $index = $this->hashIndex(self::TABLE_PACKAGE_RELEASES, $packageId . '@@' . $release . $suffix);
         $this->state[self::TABLE_PACKAGE_RELEASES][$index] = [
             'id' => $packageId,
             'provider' => $providerId,
             'name' => $package,
             'version' => $release,
+            'artifact' => $artifact,
             'publickey' => $publicKeyId,
             'signature' => $signature,
             'revoked' => false,
@@ -220,6 +235,7 @@ class DummyDB implements DbInterface
      * @param string $package
      * @param string $publicKey
      * @param string $release
+     * @param ?string $artifact
      * @param array $meta
      * @param string $hash
      * @return bool
@@ -230,12 +246,18 @@ class DummyDB implements DbInterface
         $package,
         $publicKey,
         $release,
+        $artifact = null,
         array $meta = array(),
         $hash = ''
     ) {
         $providerId = $this->getProviderId($provider);
         $packageId = $this->getPackageId($package, $providerId);
-        $index = $this->hashIndex(self::TABLE_PACKAGE_RELEASES, $packageId . '@@' . $release);
+        if (!is_null($artifact)) {
+            $suffix =  '@@' . $artifact;
+        } else {
+            $suffix = '@@';
+        }
+        $index = $this->hashIndex(self::TABLE_PACKAGE_RELEASES, $packageId . '@@' . $release . $suffix);
         $this->state[self::TABLE_PACKAGE_RELEASES][$index]['revoked'] = true;
         $this->state[self::TABLE_PACKAGE_RELEASES][$index]['revokehash'] = $hash;
         $this->updateMeta($hash);
@@ -366,14 +388,20 @@ class DummyDB implements DbInterface
      * @param string $providerName
      * @param string $packageName
      * @param string $version
+     * @param ?string $artifact
      * @param int $offset          For supporting multiple releases with the same name (if some were revoked)
      * @return array
      */
-    public function getRelease($providerName, $packageName, $version, $offset = 0)
+    public function getRelease($providerName, $packageName, $version, $artifact = null, $offset = 0)
     {
         $providerId = $this->getProviderId($providerName);
         $packageId = $this->getPackageId($packageName, $providerId);
-        $index = $this->hashIndex(self::TABLE_PACKAGE_RELEASES, $packageId . '@@' . $version);
+        if (!is_null($artifact)) {
+            $suffix =  '@@' . $artifact;
+        } else {
+            $suffix = '@@';
+        }
+        $index = $this->hashIndex(self::TABLE_PACKAGE_RELEASES, $packageId . '@@' . $version . $suffix);
         if (empty($this->state[self::TABLE_PACKAGE_RELEASES][$index])) {
             return [];
         }
@@ -384,13 +412,19 @@ class DummyDB implements DbInterface
      * @param string $providerName
      * @param string $packageName
      * @param string $version
+     * @param ?string $artifact
      * @return array{attestor: string, attestation: string, ledgerhash: string}[]
      */
-    public function getAttestations($providerName, $packageName, $version)
+    public function getAttestations($providerName, $packageName, $version, $artifact = null)
     {
         $providerId = $this->getProviderId($providerName);
         $packageId = $this->getPackageId($packageName, $providerId);
-        $releaseIndex = $this->hashIndex(self::TABLE_PACKAGE_RELEASES, $packageId . '@@' . $version);
+        if (!is_null($artifact)) {
+            $suffix =  '@@' . $artifact;
+        } else {
+            $suffix = '@@';
+        }
+        $releaseIndex = $this->hashIndex(self::TABLE_PACKAGE_RELEASES, $packageId . '@@' . $version . $suffix);
         return $this->state[self::TABLE_ATTESTATIONS][$releaseIndex];
     }
 }
