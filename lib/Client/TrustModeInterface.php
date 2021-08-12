@@ -18,7 +18,8 @@ interface TrustModeInterface
      * @param string $provider
      * @param string $package
      * @param string $version
+     * @param ?string $artifact
      * @return UpdateFile
      */
-    public function getUpdateInfo($provider, $package, $version);
+    public function getUpdateInfo($provider, $package, $version, $artifact = null);
 }
