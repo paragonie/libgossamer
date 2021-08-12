@@ -25,7 +25,7 @@
     "ext-pdo": "*",
     "paragonie/certainty": "^2.8",
     "paragonie/easydb": "^1|^2",
-    "paragonie/sodium_compat": "^1.14"
+    "paragonie/sodium_compat": "^1.17"
   },
   "require-dev": {
     "guzzlehttp/guzzle": "^6|^7",
