@@ -9,14 +9,35 @@ use PHPUnit\Framework\TestCase;
  */
 class GitDiffBundlerTest extends TestCase
 {
+    /** @var string $dir */
+    protected $dir = '';
+
     /**
-     * @before
+     * @beforeClass
      */
     public function before()
     {
+        if (!empty($this->dir)) {
+            return;
+        }
         if (!is_callable('shell_exec')) {
             $this->markTestSkipped("shell_exec() is not callable");
         }
+        $dir = __DIR__;
+        do {
+            $prev = $dir;
+            $dir = realpath(dirname($dir));
+        } while (!empty($dir) && $dir !== $prev && !is_dir($dir . '/.git'));
+        if (empty($dir)) {
+            $this->markTestSkipped("Cannot test in CI");
+        }
+        // Github Actions hack.
+        if ($dir === '/home/runner/work/libgossamer/libgossamer') {
+            $dummy = 'dummy-' . bin2hex(random_bytes(16));
+            $dir = __DIR__ . '/' . $dummy;
+            exec("git clone https://github.com/paragonie/libgossamer $dir");
+        }
+        $this->dir = $dir;
     }
 
     /**
@@ -27,10 +48,13 @@ class GitDiffBundlerTest extends TestCase
      */
     public function testGitDiffTags()
     {
+        if (empty($this->dir)) {
+            $this->markTestSkipped("Cannot test in CI");
+        }
+        $this->assertNotEmpty($this->dir);
         $bundler = (new GitDiffBundler())
-            ->setWorkDirectory(dirname(dirname(dirname(__DIR__))))
+            ->setWorkDirectory($this->dir)
             ->setPreviousIdentifier('v0.1.0');
-
         // Non-empty
         $hash = hash('sha256', $bundler->getGitDiff('v0.2.0'));
         $this->assertSame('8e61594f221c4608a8e5e44376cb5dac08758b7c4224007a33fab993d5ba7470', $hash);
@@ -51,8 +75,12 @@ class GitDiffBundlerTest extends TestCase
      */
     public function testGitDiffCommits()
     {
+        if (empty($this->dir)) {
+            $this->markTestSkipped("Cannot test in CI");
+        }
+        $this->assertNotEmpty($this->dir);
         $bundler = (new GitDiffBundler())
-            ->setWorkDirectory(dirname(dirname(dirname(__DIR__))))
+            ->setWorkDirectory($this->dir)
             ->setPreviousIdentifier('062e0f46629dfd293aa5471890b8bda80b53b63b');
 
         // Non-empty

@@ -26,7 +26,7 @@ class GitDiffBundler implements ReleaseBundlerInterface
     public function setWorkDirectory($directory)
     {
         $this->assert(is_string($directory), "Argument 1 must be a string");
-        $this->assert(is_dir($directory), "Given path is not a directory");
+        $this->assert(is_dir($directory), "Given path is not a directory: {$directory}");
         $this->directory = $directory;
         return $this;
     }
@@ -73,8 +73,8 @@ class GitDiffBundler implements ReleaseBundlerInterface
              * We need to use shell_exec() to get the output of git diff.
              * @psalm-suppress ForbiddenCode
              */
-            $result = (string) shell_exec(
-                "git diff {$this->previousIdentifier}..{$current}"
+            $result = (string) @shell_exec(
+                "git diff {$this->previousIdentifier}..{$current} -G."
             );
             \chdir($workingDir);
             return $result;
