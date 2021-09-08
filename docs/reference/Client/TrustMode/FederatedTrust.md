@@ -6,7 +6,7 @@
 
 **Arguments**:
 
-1. [HttpInterface](../../HttpInterface.md)
+1. [HttpInterface](../../Interfaces/HttpInterface.md)
 2. `string` URL to the [Gossamer Server](https://github.com/paragonie/gossamer-server)
 
 ## Class Methods

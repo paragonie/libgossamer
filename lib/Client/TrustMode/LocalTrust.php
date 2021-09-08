@@ -3,7 +3,7 @@ namespace ParagonIE\Gossamer\Client\TrustMode;
 
 use ParagonIE\Gossamer\Client\TrustModeInterface;
 use ParagonIE\Gossamer\Client\UpdateFile;
-use ParagonIE\Gossamer\DbInterface;
+use ParagonIE\Gossamer\Interfaces\DbInterface;
 
 /**
  * Class LocalTrust

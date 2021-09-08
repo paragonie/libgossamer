@@ -5,7 +5,7 @@ use ParagonIE\Gossamer\Client\TrustModeInterface;
 use ParagonIE\Gossamer\Client\TypeHelperTrait;
 use ParagonIE\Gossamer\Client\UpdateFile;
 use ParagonIE\Gossamer\GossamerException;
-use ParagonIE\Gossamer\HttpInterface;
+use ParagonIE\Gossamer\Interfaces\HttpInterface;
 
 /**
  * Class FederatedTrust

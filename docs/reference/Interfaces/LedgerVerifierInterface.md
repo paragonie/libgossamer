@@ -1,6 +1,6 @@
 # Libgossamer API Reference - LedgerVerifierInterface
 
-* **Fully Qualified Interface Name**: `ParagonIE\Gossamer\LedgerVerifierInterface`
+* **Fully Qualified Interface Name**: `ParagonIE\Gossamer\Interfaces\LedgerVerifierInterface`
 
 This interface extends both [`LedgerInterface`](LedgerInterface.md) and
 [`VerifierInterface`](VerifierInterface.md). 

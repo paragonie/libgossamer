@@ -2,7 +2,7 @@
 namespace ParagonIE\Gossamer\Tests\Dummy;
 
 use ParagonIE\Gossamer\Protocol\SignedMessage;
-use ParagonIE\Gossamer\ScribeInterface;
+use ParagonIE\Gossamer\Interfaces\ScribeInterface;
 use ParagonIE\Gossamer\Util;
 
 /**

@@ -6,7 +6,7 @@
 
 **Arguments**:
 
-1. [DbInterface](../../DbInterface.md)
+1. [DbInterface](../../Interfaces/DbInterface.md)
 
 ## Class Methods
 

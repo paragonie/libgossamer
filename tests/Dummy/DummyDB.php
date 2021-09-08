@@ -1,7 +1,7 @@
 <?php
 namespace ParagonIE\Gossamer\Tests\Dummy;
 
-use ParagonIE\Gossamer\DbInterface;
+use ParagonIE\Gossamer\Interfaces\DbInterface;
 use ParagonIE\Gossamer\GossamerException;
 
 /**

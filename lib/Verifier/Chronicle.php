@@ -2,9 +2,9 @@
 namespace ParagonIE\Gossamer\Verifier;
 
 use ParagonIE\Gossamer\GossamerException;
-use ParagonIE\Gossamer\HttpInterface;
-use ParagonIE\Gossamer\LedgerInterface;
-use ParagonIE\Gossamer\LedgerVerifierInterface;
+use ParagonIE\Gossamer\Interfaces\HttpInterface;
+use ParagonIE\Gossamer\Interfaces\LedgerInterface;
+use ParagonIE\Gossamer\Interfaces\LedgerVerifierInterface;
 use ParagonIE\Gossamer\Protocol\SignedMessage;
 use ParagonIE\Gossamer\Util;
 use SodiumException;

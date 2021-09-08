@@ -1,6 +1,8 @@
 <?php
 namespace ParagonIE\Gossamer\Client;
 
+use Exception;
+
 /**
  * Trait TypeHelperTrait
  * @package ParagonIE\Gossamer\Client
@@ -23,7 +25,7 @@ trait TypeHelperTrait
             /** @var \Exception|\Error $error */
             $error = new $errorClass($errorMessage);
             if (!($error instanceof \Exception) && !($error instanceof \Error)) {
-                $error = new \Exception($errorMessage);
+                $error = new Exception($errorMessage);
             }
             throw $error;
         }

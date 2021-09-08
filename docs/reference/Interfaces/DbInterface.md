@@ -1,6 +1,6 @@
 # Libgossamer API Reference - DbInterface
 
-* **Fully Qualified Interface Name**: `ParagonIE\Gossamer\DbInterface`
+* **Fully Qualified Interface Name**: `ParagonIE\Gossamer\Interfaces\DbInterface`
 
 ## Constants
 

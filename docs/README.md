@@ -34,7 +34,7 @@ For more information, please refer to the **[security documentation](security)**
 | [`Message`](reference/Protocol/Message.md) | A serialized `Action`. |
 | [`SignedMessage`](reference/Protocol/SignedMessage.md) | A cryptographically signed (and identity-bound) `Message`. |
 | [`Packet`](reference/Protocol/Packet.md) | HTTP request or response (i.e. to/from a cryptographic ledger) |
-| [`Scribe`](reference/ScribeInterface.md) | Publishes `SignedMessage`s to a ledger. |
+| [`Scribe`](reference/Interfaces/ScribeInterface.md) | Publishes `SignedMessage`s to a ledger. |
 | [`ReleaseSigner`](reference/Release/Signer.md) | Signs a file with your secret key. |
 | [`ReleaseVerifier`](reference/Release/Verifier.md) | Verifies a file against your public key. |
 

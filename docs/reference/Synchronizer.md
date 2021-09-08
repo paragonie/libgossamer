@@ -22,9 +22,9 @@ to the secure operation of libgossamer.
 
 **Arguments**:
 
-1. [`DbInterface`](DbInterface.md)
-2. [`HttpInterface`](HttpInterface.md)
-3. [`LedgerVerifierInterface`](LedgerVerifierInterface.md)
+1. [`DbInterface`](Interfaces/DbInterface.md)
+2. [`HttpInterface`](Interfaces/HttpInterface.md)
+3. [`LedgerVerifierInterface`](Interfaces/LedgerVerifierInterface.md)
 4. `array` - Pool of ledgers. Each item in this array must be an array with the following keys:
    1. `url`: `string`
    2. `public-key`: `string`
@@ -59,7 +59,7 @@ Both the source and each peer will an array with the following keys:
 
 1. `array` - Configuration
 
-**Returns** an object that implements [`SourceInterface`](SourceInterface.md).
+**Returns** an object that implements [`SourceInterface`](Interfaces/SourceInterface.md).
 
 ### `getVerifier()`
 
@@ -67,7 +67,7 @@ Both the source and each peer will an array with the following keys:
 
 1. `array` - Peers
 
-**Returns** an object that implements [`LedgerVerifierInterface`](LedgerVerifierInterface.md).
+**Returns** an object that implements [`LedgerVerifierInterface`](Interfaces/LedgerVerifierInterface.md).
 
 ### `sync()`
 
@@ -79,7 +79,7 @@ or we encounter a [`GossamerException`](GossamerException.md).
 ### `transcribe()`
 
 Verify signatures, extract the [`Action`](Protocol/Action.md), then apply it on
-the Synchronizer's [`DbInterface`](DbInterface.md) object.
+the Synchronizer's [`DbInterface`](Interfaces/DbInterface.md) object.
 
 **Arguments**:
 

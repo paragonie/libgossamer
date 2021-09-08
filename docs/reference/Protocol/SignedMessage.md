@@ -38,7 +38,7 @@
 1. `string` - Contents
 2. `string` - Provider
 3. `string` - Secret Key
-4. [`CryptoProviderBackend`](../CryptoBackendInterface.md) -
+4. [`CryptoProviderBackend`](../Interfaces/CryptoBackendInterface.md) -
    Optional cryptographic backend. Defaults to [SodiumBackend](../CryptoBackends/SodiumBackend.md).
 
 **Returns** a `SignedMessage` object.
@@ -79,7 +79,7 @@ Was this signed by the blessed super-provider?
 
 **Arguments**:
 
-1. [`DbInterface`](../DbInterface.md)
+1. [`DbInterface`](../Interfaces/DbInterface.md)
 2. `string` - Super Provider Name
 
 **Returns** a `bool`.
@@ -90,7 +90,7 @@ Was this signed by the provider responsible?
 
 **Arguments**:
 
-1. [`DbInterface`](../DbInterface.md)
+1. [`DbInterface`](../Interfaces/DbInterface.md)
 
 **Returns** a `bool`.
 
@@ -101,7 +101,7 @@ if applicable), and return the `Message` object contained within.
 
 **Arguments**:
 
-1. [`DbInterface`](../DbInterface.md)
+1. [`DbInterface`](../Interfaces/DbInterface.md)
 2. `string` - Super Provider Name
 
 **Returns** a [`Message`](Message.md).

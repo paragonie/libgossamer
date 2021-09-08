@@ -1,5 +1,7 @@
 <?php
-namespace ParagonIE\Gossamer;
+namespace ParagonIE\Gossamer\Interfaces;
+
+use ParagonIE\Gossamer\GossamerException;
 
 interface DbInterface
 {

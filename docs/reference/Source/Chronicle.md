@@ -1,4 +1,4 @@
-# Libgossamer API Reference - Source - Chronicle ([SourceInterface](../SourceInterface.md))
+# Libgossamer API Reference - Source - Chronicle ([SourceInterface](../Interfaces/SourceInterface.md))
 
 * **Fully Qualified Class Name**: `ParagonIE\Gossamer\Source\Chronicle`
 
@@ -6,12 +6,12 @@
 
 **Arguments**:
 
-1. [`HttpInterface`](../HttpInterface.md)
+1. [`HttpInterface`](../Interfaces/HttpInterface.md)
 2. `string` - URL
 3. `string` - Public Key
 4. `string` - Trust Level
 
 ## Methods
 
-See [SourceInterface](../SourceInterface.md) for definitions. This class just implements
+See [SourceInterface](../Interfaces/SourceInterface.md) for definitions. This class just implements
 the contract in `SourceInterface` with a Chronicle in mind.

@@ -1,9 +1,9 @@
 <?php
 namespace ParagonIE\Gossamer\Scribe;
 
-use ParagonIE\Gossamer\HttpInterface;
+use ParagonIE\Gossamer\Interfaces\HttpInterface;
 use ParagonIE\Gossamer\Protocol\SignedMessage;
-use ParagonIE\Gossamer\ScribeInterface;
+use ParagonIE\Gossamer\Interfaces\ScribeInterface;
 use ParagonIE\Gossamer\Util;
 use SodiumException;
 

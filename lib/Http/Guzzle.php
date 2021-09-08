@@ -4,7 +4,7 @@ namespace ParagonIE\Gossamer\Http;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use ParagonIE\Certainty\Exception\CertaintyException;
-use ParagonIE\Gossamer\HttpInterface;
+use ParagonIE\Gossamer\Interfaces\HttpInterface;
 use ParagonIE\Certainty\RemoteFetch;
 use Psr\Http\Message\ResponseInterface;
 use SodiumException;

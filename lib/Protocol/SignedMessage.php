@@ -1,10 +1,10 @@
 <?php
 namespace ParagonIE\Gossamer\Protocol;
 
-use ParagonIE\Gossamer\DbInterface;
+use ParagonIE\Gossamer\Interfaces\DbInterface;
 use ParagonIE\Gossamer\GossamerException;
 use ParagonIE\Gossamer\CryptoBackends\SodiumBackend;
-use ParagonIE\Gossamer\CryptoBackendInterface;
+use ParagonIE\Gossamer\Interfaces\CryptoBackendInterface;
 use ParagonIE\Gossamer\Util;
 use SodiumException;
 

@@ -1,7 +1,7 @@
 <?php
 namespace ParagonIE\Gossamer\CryptoBackends;
 
-use ParagonIE\Gossamer\CryptoBackendInterface;
+use ParagonIE\Gossamer\Interfaces\CryptoBackendInterface;
 use ParagonIE\Gossamer\Util;
 
 /**

@@ -2,8 +2,8 @@
 namespace ParagonIE\Gossamer\Source;
 
 use ParagonIE\Gossamer\GossamerException;
-use ParagonIE\Gossamer\HttpInterface;
-use ParagonIE\Gossamer\SourceInterface;
+use ParagonIE\Gossamer\Interfaces\HttpInterface;
+use ParagonIE\Gossamer\Interfaces\SourceInterface;
 use ParagonIE\Gossamer\Response;
 use ParagonIE\Gossamer\Verifier\Chronicle as ChronicleVerifier;
 use SodiumException;

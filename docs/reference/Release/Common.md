@@ -14,7 +14,7 @@
 **Arguments**:
 
 1. `int` Algorithm (see [Class Constants](#class-constants))
-2. [`CryptoBackendInterface`](../CryptoBackendInterface.md) Optional backend.
+2. [`CryptoBackendInterface`](../Interfaces/CryptoBackendInterface.md) Optional backend.
    Defaults to [SodiumBackend](../CryptoBackends/SodiumBackend.md).
 
 ## Static Methods

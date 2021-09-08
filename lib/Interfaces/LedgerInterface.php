@@ -1,5 +1,5 @@
 <?php
-namespace ParagonIE\Gossamer;
+namespace ParagonIE\Gossamer\Interfaces;
 
 /**
  * Interface LedgerInterface
