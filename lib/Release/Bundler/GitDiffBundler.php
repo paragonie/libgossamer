@@ -68,11 +68,11 @@ class GitDiffBundler implements ReleaseBundlerInterface
 
         // @todo Support more techniques
         if (is_callable('shell_exec')) {
+            \chdir($this->directory);
             /**
              * We need to use shell_exec() to get the output of git diff.
              * @psalm-suppress ForbiddenCode
              */
-            \chdir($this->directory);
             $result = (string) shell_exec(
                 "git diff {$this->previousIdentifier}..{$current}"
             );
