@@ -2,7 +2,7 @@
 namespace ParagonIE\Gossamer\Client\TrustMode;
 
 use ParagonIE\Gossamer\Client\TrustModeInterface;
-use ParagonIE\Gossamer\Client\TypeHelperTrait;
+use ParagonIE\Gossamer\TypeHelperTrait;
 use ParagonIE\Gossamer\Client\UpdateFile;
 use ParagonIE\Gossamer\GossamerException;
 use ParagonIE\Gossamer\Interfaces\HttpInterface;
