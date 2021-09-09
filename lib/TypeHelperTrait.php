@@ -1,5 +1,5 @@
 <?php
-namespace ParagonIE\Gossamer\Client;
+namespace ParagonIE\Gossamer;
 
 use Exception;
 

@@ -65,4 +65,4 @@ jobs:
           composer-options: --ignore-platform-reqs
 
       - name: PHPUnit tests
-        run: vendor/bin/phpunit
+        run: php -d phar.readonly=0 vendor/bin/phpunit

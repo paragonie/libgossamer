@@ -2,6 +2,7 @@
 namespace ParagonIE\Gossamer\Client;
 
 use ParagonIE\Gossamer\Release\Common;
+use ParagonIE\Gossamer\TypeHelperTrait;
 
 /**
  * Class GossamerClient
