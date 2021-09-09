@@ -13,7 +13,7 @@ class GitDiffBundlerTest extends TestCase
     protected $dir = '';
 
     /**
-     * @beforeClass
+     * @before
      */
     public function before()
     {
