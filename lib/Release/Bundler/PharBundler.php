@@ -48,5 +48,6 @@ class PharBundler extends AbstractBundler
         $phar->stopBuffering();
 
         \chdir($workingDir);
+        return is_file($outputFile);
     }
 }
