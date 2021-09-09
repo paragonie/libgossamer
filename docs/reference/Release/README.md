@@ -5,9 +5,12 @@ version releases for packages.
 
 ## Classes
 
-* [Backends](../CryptoBackends)
-    * [SodiumBackend](../CryptoBackends/SodiumBackend.md)
+* [Bundler](Bundler)
+  * [AbstractBundler](Bundler/AbstractBundler.md)
+  * [GitDiffBundler](Bundler/GitDiffBundler.md)
+  * [PharBundler](Bundler/PharBundler.md)
+  * [TarBundler](Bundler/TarBundler.md)
+  * [ZipBundler](Bundler/ZipBundler.md)
 * [Common](Common.md)
-* [CryptoBakendInterface](../Interfaces/CryptoBackendInterface.md)
 * [Signer](Signer.md)
 * [Verifier](Verifier.md)

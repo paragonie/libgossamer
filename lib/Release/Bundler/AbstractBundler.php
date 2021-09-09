@@ -10,7 +10,6 @@ abstract class AbstractBundler implements ReleaseBundlerInterface
 {
     use TypeHelperTrait;
 
-
     /** @var string $directory */
     protected $directory = '';
 
