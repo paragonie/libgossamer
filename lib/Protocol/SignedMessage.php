@@ -148,11 +148,13 @@ class SignedMessage
     }
 
     /**
+     * @param bool $pretty
      * @return string
      * @throws SodiumException
      */
-    public function toString()
+    public function toString($pretty = false)
     {
+        $code = $pretty ? JSON_PRETTY_PRINT : 0;
         return (string) json_encode(array(
             'signature' => sodium_bin2base64(
                 Util::rawBinary($this->message->getSignature(), 64),
@@ -161,7 +163,7 @@ class SignedMessage
             'message' => $this->message->getContents(),
             'provider' => $this->provider,
             'public-key' => $this->publicKey
-        ));
+        ), $code);
     }
 
     /**
