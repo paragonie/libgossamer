@@ -71,4 +71,40 @@ class Message
             Util::rawBinary($publicKey, 32)
         );
     }
+
+    /**
+     * @param bool $pretty
+     * @return string
+     * @throws SodiumException
+     */
+    public function toString($pretty = false)
+    {
+        $code = $pretty ? JSON_PRETTY_PRINT : 0;
+        if ($this->signature) {
+            $signature = sodium_bin2base64(
+                Util::rawBinary($this->getSignature(), 64),
+                SODIUM_BASE64_VARIANT_URLSAFE
+            );
+        } else {
+            $signature = '';
+        }
+        return (string) json_encode(array(
+            'signature' => $signature,
+            'message' => $this->getContents(),
+        ), $code);
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        try {
+            return $this->toString();
+        } catch (\Error $ex) {
+            return '';
+        } catch (\Exception $ex) {
+            return '';
+        }
+    }
 }
