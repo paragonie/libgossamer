@@ -34,7 +34,6 @@ class Common
      * @param CryptoBackendInterface|null $backend
      *
      * @throws GossamerException
-     * @psalm-suppress InternalMethod
      */
     public function __construct(
         $alg = self::SIGN_ALG_ED25519_SHA384,
@@ -49,7 +48,7 @@ class Common
         if (!array_key_exists($alg, $map)) {
             throw new GossamerException('Invalid algorithm: ' . $alg . ' (0x' . dechex($alg) . ').');
         }
-        $this->alg = \ParagonIE_Sodium_Core_Util::store_4($alg);
+        $this->alg = pack('N', $alg);
         $this->signatureAlgorithm = $map[$alg]['signature'];
         $this->hashAlgorithm = $map[$alg]['file-hash'];
     }
